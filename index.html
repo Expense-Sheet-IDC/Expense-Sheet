@@ -349,61 +349,75 @@
             .signature-section { margin-top: 100px; page-break-inside: avoid; }
         }
     </style>
-</style>
 <!-- Is CSS code se teeno dropdowns aur labels ki line bilkul ek jaisi seedhi ho jaye gi -->
-<style>
-    .month-selector-bar {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center; /* Yeh line saare elements ko vertically ek line mein center karti hai */
-        gap: 15px;
-        padding: 10px 0;
-    }
+ <!-- CSS Styles for Desktop and Mobile Grid Layout -->
+        <style>
+            .custom-selector-bar {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                align-items: center;
+                gap: 25px;
+                padding: 15px 0;
+                margin-bottom: 25px;
+                width: 100%;
+                background-color: transparent;
+            }
 
-    .selector-item {
-        display: flex;
-        align-items: center; /* Labels aur dropdowns ko aapas mein ek jaisa seedha rakhne ke liye */
-        gap: 8px;
-    }
+            .custom-group {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
 
-    .selector-item label {
-        font-weight: bold;
-        margin: 0 !important; /* Puraani margin khatam karne ke liye */
-        padding: 0 !important;
-        white-space: nowrap;
-    }
+            .custom-group label {
+                font-weight: bold;
+                margin: 0 !important;
+                padding: 0 !important;
+                white-space: nowrap;
+                font-size: 14px;
+                color: #333;
+            }
 
-    .selector-item select {
-        padding: 4px 8px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        font-family: inherit;
-        font-size: 14px;
-        background-color: #fff;
-        height: 32px; /* Fixed height taake teeno boxes ka size bilkul ek jaisa ho */
-        box-sizing: border-box;
-    }
+            .custom-group select {
+                padding: 6px 12px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                font-family: inherit;
+                font-size: 14px;
+                background-color: #fff;
+                height: 34px;
+                min-width: 80px;
+                box-sizing: border-box;
+            }
 
-    /* Mobile screen responsive rules */
-    @media (max-width: 600px) {
-        .month-selector-bar {
-            flex-direction: column;
-            align-items: stretch;
-            gap: 12px;
-            padding: 10px;
-        }
+            /* Mobile Screens (Aap ki responsive setting) */
+            @media (max-width: 600px) {
+                .custom-selector-bar {
+                    flex-direction: column !important;
+                    align-items: stretch !important;
+                    gap: 15px !important;
+                    padding: 15px !important;
+                    box-sizing: border-box;
+                }
 
-        .selector-item {
-            justify-content: space-between;
-            width: 100%;
-        }
+                .custom-group {
+                    justify-content: space-between !important;
+                    width: 100% !important;
+                    background: #f9f9f9;
+                    padding: 8px 12px;
+                    border-radius: 6px;
+                    border: 1px solid #eee;
+                    box-sizing: border-box;
+                }
 
-        .selector-item select {
-            width: 65%;
-            height: 36px; /* Mobile par thoda bara box taake touch karne mein aasani ho */
-        }
-    }
-</style>
+                .custom-group select {
+                    width: 60% !important;
+                    height: 38px !important; /* Mobile par click karne mein aasani ke liye thoda bara */
+                }
+            }
+        </style>
 </head>
 <body>
     <div class="container">
