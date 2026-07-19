@@ -349,6 +349,51 @@
             .signature-section { margin-top: 100px; page-break-inside: avoid; }
         }
     </style>
+</style>
+<!-- Mobile screen par sahi dikhane ke liye CSS style yahan add kiya hai -->
+<style>
+    .month-selector-bar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 15px;
+        padding: 10px 0;
+    }
+
+    .selector-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .selector-item select {
+        padding: 6px 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-family: inherit;
+        font-size: 14px;
+        background-color: #fff;
+    }
+
+    @media (max-width: 600px) {
+        .month-selector-bar {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 12px;
+            padding: 10px;
+        }
+
+        .selector-item {
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .selector-item select {
+            width: 65%;
+            padding: 8px;
+        }
+    }
+</style>
 </head>
 <body>
     <div class="container">
@@ -361,81 +406,87 @@
             <p>Monthly Expense Sheet IDC G-8 Branch Islamabad</p>
         </header>
 
-                <!-- Month & Year Dynamic Selection Bar -->
+        <!-- Naya Month, Day & Year Selection Bar jo mobile par kharab nahi hoga -->
         <div class="month-selector-bar">
-            <!-- 1. ADDED DAY SELECTOR BEFORE THE MONTH SELECTOR -->
-            <label for="sheet-day">Date:</label>
-            <select id="sheet-day" onchange="saveReportPeriod()" style="padding: 4px 8px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit;">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
-                <option value="11">11</option>
-                <option value="12">12</option>
-                <option value="13">13</option>
-                <option value="14">14</option>
-                <option value="15">15</option>
-                <option value="16">16</option>
-                <option value="17">17</option>
-                <option value="18">18</option>
-                <option value="19">19</option>
-                <option value="20">20</option>
-                <option value="21">21</option>
-                <option value="22">22</option>
-                <option value="23">23</option>
-                <option value="24">24</option>
-                <option value="25">25</option>
-                <option value="26">26</option>
-                <option value="27">27</option>
-                <option value="28">28</option>
-                <option value="29">29</option>
-                <option value="30">30</option>
-                <option value="31">31</option>
-            </select>
+            <!-- Day Selector -->
+            <div class="selector-item">
+                <label for="sheet-day">Date:</label>
+                <select id="sheet-day" onchange="saveReportPeriod()">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
+                    <option value="16">16</option>
+                    <option value="17">17</option>
+                    <option value="18">18</option>
+                    <option value="19">19</option>
+                    <option value="20">20</option>
+                    <option value="21">21</option>
+                    <option value="22">22</option>
+                    <option value="23">23</option>
+                    <option value="24">24</option>
+                    <option value="25">25</option>
+                    <option value="26">26</option>
+                    <option value="27">27</option>
+                    <option value="28">28</option>
+                    <option value="29">29</option>
+                    <option value="30">30</option>
+                    <option value="31">31</option>
+                </select>
+            </div>
 
-            <!-- 2. MONTH SELECTOR FOLLOWS THE DAY SELECTOR -->
-            <label for="sheet-month" style="margin-left: 15px;">Report Month:</label>
-            <select id="sheet-month" onchange="saveReportPeriod()">
-                <option value="January">January</option>
-                <option value="February">February</option>
-                <option value="March">March</option>
-                <option value="April">April</option>
-                <option value="May">May</option>
-                <option value="June">June</option>
-                <option value="July">July</option>
-                <option value="August">August</option>
-                <option value="September">September</option>
-                <option value="October">October</option>
-                <option value="November">November</option>
-                <option value="December">December</option>
-            </select>
+            <!-- Month Selector -->
+            <div class="selector-item">
+                <label for="sheet-month">Report Month:</label>
+                <select id="sheet-month" onchange="saveReportPeriod()">
+                    <option value="January">January</option>
+                    <option value="February">February</option>
+                    <option value="March">March</option>
+                    <option value="April">April</option>
+                    <option value="May">May</option>
+                    <option value="June">June</option>
+                    <option value="July">July</option>
+                    <option value="August">August</option>
+                    <option value="September">September</option>
+                    <option value="October">October</option>
+                    <option value="November">November</option>
+                    <option value="December">December</option>
+                </select>
+            </div>
 
-            <label for="sheet-year" style="margin-left: 15px;">Year:</label>
-            <select id="sheet-year" onchange="saveReportPeriod()">
-                <option value="2021">2021</option>
-                <option value="2022">2022</option>
-                <option value="2023">2023</option>
-                <option value="2024">2024</option>
-                <option value="2025">2025</option>
-                <option value="2026">2026</option>
-                <option value="2027">2027</option>
-                <option value="2028">2028</option>
-                <option value="2029">2029</option>
-                <option value="2030">2030</option>
-                <option value="2031">2031</option>
-                <option value="2032">2032</option>
-                <option value="2033">2033</option>
-                <option value="2034">2034</option>
-                <option value="2035">2035</option>
-            </select>
+            <!-- Year Selector -->
+            <div class="selector-item">
+                <label for="sheet-year">Year:</label>
+                <select id="sheet-year" onchange="saveReportPeriod()">
+                    <option value="2021">2021</option>
+                    <option value="2022">2022</option>
+                    <option value="2023">2023</option>
+                    <option value="2024">2024</option>
+                    <option value="2025">2025</option>
+                    <option value="2026">2026</option>
+                    <option value="2027">2027</option>
+                    <option value="2028">2028</option>
+                    <option value="2029">2029</option>
+                    <option value="2030">2030</option>
+                    <option value="2031">2031</option>
+                    <option value="2032">2032</option>
+                    <option value="2033">2033</option>
+                    <option value="2034">2034</option>
+                    <option value="2035">2035</option>
+                </select>
+            </div>
         </div>
-        
         <!-- Dynamic Action Toolbar -->
         <div class="toolbar">
             <button class="btn-toolbar btn-excel" onclick="exportToExcel()">📊 Export to Excel</button>
