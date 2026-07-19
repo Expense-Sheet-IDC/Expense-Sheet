@@ -361,9 +361,46 @@
             <p>Monthly Expense Sheet IDC G-8 Branch Islamabad</p>
         </header>
 
-        <!-- Month & Year Dynamic Selection Bar -->
+                <!-- Month & Year Dynamic Selection Bar -->
         <div class="month-selector-bar">
-            <label for="sheet-month">Report Month:</label>
+            <!-- 1. ADDED DAY SELECTOR BEFORE THE MONTH SELECTOR -->
+            <label for="sheet-day">Date:</label>
+            <select id="sheet-day" onchange="saveReportPeriod()" style="padding: 4px 8px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit;">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+                <option value="16">16</option>
+                <option value="17">17</option>
+                <option value="18">18</option>
+                <option value="19">19</option>
+                <option value="20">20</option>
+                <option value="21">21</option>
+                <option value="22">22</option>
+                <option value="23">23</option>
+                <option value="24">24</option>
+                <option value="25">25</option>
+                <option value="26">26</option>
+                <option value="27">27</option>
+                <option value="28">28</option>
+                <option value="29">29</option>
+                <option value="30">30</option>
+                <option value="31">31</option>
+            </select>
+
+            <!-- 2. MONTH SELECTOR FOLLOWS THE DAY SELECTOR -->
+            <label for="sheet-month" style="margin-left: 15px;">Report Month:</label>
             <select id="sheet-month" onchange="saveReportPeriod()">
                 <option value="January">January</option>
                 <option value="February">February</option>
@@ -396,14 +433,7 @@
                 <option value="2033">2033</option>
                 <option value="2034">2034</option>
                 <option value="2035">2035</option>
-                       <!-- 1. Find the end of your Year selection block -->
             </select>
-
-            <!-- 2. PASTE THIS EXACT CODE BLOCK RIGHT HERE: -->
-            <label for="sheet-date" style="margin-left: 15px;">Date:</label>
-            <input type="date" id="sheet-date" onchange="saveReportPeriod()" style="padding: 4px 8px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit;">
-
-        <!-- 3. This is the closing tag of your selector bar -->
         </div>
         
         <!-- Dynamic Action Toolbar -->
