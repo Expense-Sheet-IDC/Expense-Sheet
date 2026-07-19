@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IDC G-8 Branch - Monthly Expense Portal</title>
+    <!-- SILENCES THE BROWSER FAVICON ERROR COMPLETELY -->
+    <link rel="icon" href="data:,">
     <style>
         * {
             margin: 0;
@@ -27,7 +29,7 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
-        /* HEADER ALIGNMENT FIX */
+        /* HEADER & GRAPHIC LOGO ALIGNMENT */
         .main-header {
             text-align: center;
             margin-bottom: 15px;
@@ -38,14 +40,24 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 15px;
+            gap: 12px;
             flex-wrap: wrap;
         }
 
-        .idc-logo {
-            max-width: 80px;
-            height: auto;
-            display: block;
+        /* Pure CSS Corporate Badge replacing broken images completely */
+        .idc-badge-emblem {
+            width: 50px;
+            height: 50px;
+            background-color: #AA0719;
+            border: 4.5px solid #002060;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 900;
+            font-size: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
         }
 
         .main-header h1 {
@@ -62,8 +74,7 @@
             font-size: 14px;
             margin-top: 8px;
         }
-
-        /* NEW MONTH & YEAR SELECTOR DISPLAY BAR */
+        /* MONTH & YEAR SELECTOR DISPLAY BAR */
         .month-selector-bar {
             text-align: center;
             margin-bottom: 25px;
@@ -226,7 +237,6 @@
             cursor: pointer;
             font-weight: bold;
         }
-
         /* Table Styling */
         table {
             width: 100%;
@@ -303,11 +313,27 @@
             color: #444;
         }
 
+        /* SYSTEM FOOTER INTEGRATED IN CSS CLASS ENGINE */
+        .portal-footer {
+            text-align: center; 
+            margin-top: 50px; 
+            padding-top: 15px; 
+            border-top: 1px solid #e2e8f0; 
+            font-size: 13px; 
+            color: #64748b; 
+            font-weight: 500;
+        }
+
+        .portal-footer-author {
+            color: #002060; 
+            font-weight: 700;
+        }
+
         /* PRINT MANAGEMENT FOR EXCEL/PDF LOOK */
         @media print {
             body { background-color: white; padding: 0; }
             .container { box-shadow: none; padding: 0; width: 100%; }
-            .form-section, .toolbar, .filter-section, .action-container, th:last-child, td:last-child, .btn-edit-budget {
+            .form-section, .toolbar, .filter-section, .action-container, .portal-footer, th:last-child, td:last-child, .btn-edit-budget {
                 display: none !important;
             }
             .month-selector-bar select {
@@ -326,22 +352,21 @@
 </head>
 <body>
     <div class="container">
-        <!-- Main Header Area with Alignment Fix -->
+        <!-- Main Header Area with Integrated Graphic Emblem Fix -->
         <header class="main-header">
             <div class="header-title-container">
-                <img src="Logo.jpg" alt="IDC Corporate Logo" class="idc-logo">
+                <div class="idc-badge-emblem">IDC</div>
                 <h1>ISLAMABAD DIAGNOSTIC CENTER (PVT) LTD.</h1>
             </div>
             <p>Monthly Expense Sheet IDC G-8 Branch Islamabad</p>
         </header>
 
-        <!-- New Month & Year Dynamic Selection Bar -->
+        <!-- Month & Year Dynamic Selection Bar -->
         <div class="month-selector-bar">
             <label for="sheet-month">Report Month:</label>
             <select id="sheet-month" onchange="saveReportPeriod()">
                 <option value="January">January</option>
                 <option value="February">February</option>
-                <option value="March">March</option>
                 <option value="March">March</option>
                 <option value="April">April</option>
                 <option value="May">May</option>
@@ -356,24 +381,13 @@
 
             <label for="sheet-year" style="margin-left: 15px;">Year:</label>
             <select id="sheet-year" onchange="saveReportPeriod()">
-                <option value="2021">2021</option>
-                <option value="2022">2022</option>
-                <option value="2023">2023</option>
-                <option value="2024">2024</option>
-                <option value="2025">2025</option>
                 <option value="2026">2026</option>
                 <option value="2027">2027</option>
                 <option value="2028">2028</option>
                 <option value="2029">2029</option>
                 <option value="2030">2030</option>
-                <option value="2031">2031</option>
-                <option value="2032">2032</option>
-                <option value="2033">2033</option>
-                <option value="2034">2034</option>
-                <option value="2035">2035</option>
             </select>
         </div>
-
         <!-- Dynamic Action Toolbar -->
         <div class="toolbar">
             <button class="btn-toolbar btn-excel" onclick="exportToExcel()">📊 Export to Excel</button>
@@ -449,9 +463,7 @@
                         <th style="width: 15%;">Actions</th>
                     </tr>
                 </thead>
-                <tbody id="table-body">
-                    <!-- Dynamic Data Rows -->
-                </tbody>
+                <tbody id="table-body"></tbody>
                 <tfoot>
                     <tr class="grand-total-row">
                         <td colspan="4" style="text-align: right; font-weight: bold;">Grand Total:</td>
@@ -464,10 +476,15 @@
 
         <!-- Official Sign Boards Block Layout -->
         <section class="signature-section">
-            <div class="sig-box">Prepared By </div>
-            <div class="sig-box">Checked By </div>
-            <div class="sig-box">Approved By</div>
+            <div class="sig-box">Prepared By (Accounts Admin)</div>
+            <div class="sig-box">Checked By (Branch Manager)</div>
+            <div class="sig-box">Approved By (Finance Head)</div>
         </section>
+
+        <!-- SYSTEM FOOTER WITH M. MOAZZAM CREDIT AUTHORIZATION -->
+        <footer class="portal-footer">
+            Designed by <span class="portal-footer-author">M. Moazzam</span> | © 2026 All Rights Reserved
+        </footer>
     </div>
     <!-- JAVASCRIPT STATE ENGINE -->
     <script>
@@ -485,7 +502,6 @@
         const grandTotalValEl = document.getElementById('grand-total-val');
         const remainingCardBlock = document.getElementById('remaining-card-block');
 
-        // New Month/Year State Persistent Loader
         function initPeriod() {
             const currentMonthIndex = new Date().getMonth();
             const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -639,7 +655,6 @@
             }
         }
 
-        /* EXCEL EXPORT SCRIPT ALIGNMENT WITH MONTH NAME EXTENSION */
         function exportToExcel() {
             if (expenses.length === 0) {
                 alert("Sheet khali hai! Export karne ke liye data add karein.");
@@ -668,7 +683,6 @@
             const url = URL.createObjectURL(blob);
             
             link.setAttribute("href", url);
-            // Dynamic Excel Filename Based on Chosen Month and Year
             link.setAttribute("download", `IDC_G8_Expenses_${activeMonth}_${activeYear}.csv`);
             link.style.visibility = 'hidden';
             document.body.appendChild(link);
@@ -676,7 +690,6 @@
             document.body.removeChild(link);
         }
 
-        // Initial Boot Setup
         initPeriod();
         updateSummary();
         applyFilters();
