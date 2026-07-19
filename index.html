@@ -381,13 +381,31 @@
 
             <label for="sheet-year" style="margin-left: 15px;">Year:</label>
             <select id="sheet-year" onchange="saveReportPeriod()">
+                <option value="2021">2021</option>
+                <option value="2022">2022</option>
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
                 <option value="2026">2026</option>
                 <option value="2027">2027</option>
                 <option value="2028">2028</option>
                 <option value="2029">2029</option>
                 <option value="2030">2030</option>
+                <option value="2031">2031</option>
+                <option value="2032">2032</option>
+                <option value="2033">2033</option>
+                <option value="2034">2034</option>
+                <option value="2035">2035</option>
+                       <!-- 1. Find the end of your Year selection block -->
             </select>
+
+            <!-- 2. PASTE THIS EXACT CODE BLOCK RIGHT HERE: -->
+            <label for="sheet-date" style="margin-left: 15px;">Date:</label>
+            <input type="date" id="sheet-date" onchange="saveReportPeriod()" style="padding: 4px 8px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit;">
+
+        <!-- 3. This is the closing tag of your selector bar -->
         </div>
+        
         <!-- Dynamic Action Toolbar -->
         <div class="toolbar">
             <button class="btn-toolbar btn-excel" onclick="exportToExcel()">📊 Export to Excel</button>
@@ -408,7 +426,7 @@
             </div>
             <div class="card remaining-card" id="remaining-card-block">
                 <h3>Remaining</h3>
-                <p id="remaining-budget">PKR 500,000</p>
+                <p id="remaining-budget">PKR 50,000</p>
             </div>
         </section>
 
@@ -476,9 +494,9 @@
 
         <!-- Official Sign Boards Block Layout -->
         <section class="signature-section">
-            <div class="sig-box">Prepared By (Accounts Admin)</div>
-            <div class="sig-box">Checked By (Branch Manager)</div>
-            <div class="sig-box">Approved By (Finance Head)</div>
+            <div class="sig-box">Prepared By </div>
+            <div class="sig-box">Checked By </div>
+            <div class="sig-box">Approved By </div>
         </section>
 
         <!-- SYSTEM FOOTER WITH M. MOAZZAM CREDIT AUTHORIZATION -->
