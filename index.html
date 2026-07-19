@@ -414,14 +414,15 @@
                 <h1>ISLAMABAD DIAGNOSTIC CENTER (PVT) LTD.</h1>
             </div>
             <p>Monthly Expense Sheet IDC G-8 Branch Islamabad</p>
-        </header>
+              </header>
 
-        <!-- Naya Month, Day & Year Selection Bar jo mobile par kharab nahi hoga -->
-        <div class="month-selector-bar">
-            <!-- Day Selector -->
-            <div class="selector-item">
-                <label for="sheet-day">Date:</label>
-                <select id="sheet-day" onchange="saveReportPeriod()">
+        <!-- Fixed Alignment Dynamic Selection Bar -->
+        <div class="month-selector-bar" style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 20px; padding: 15px 0; margin-bottom: 20px; width: 100%;">
+            
+            <!-- Day Selector Group -->
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <label for="sheet-day" style="font-weight: bold; margin: 0; white-space: nowrap;">Date:</label>
+                <select id="sheet-day" onchange="saveReportPeriod()" style="padding: 4px 8px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; font-size: 14px; background-color: #fff; height: 32px;">
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
@@ -456,10 +457,10 @@
                 </select>
             </div>
 
-            <!-- Month Selector -->
-            <div class="selector-item">
-                <label for="sheet-month">Report Month:</label>
-                <select id="sheet-month" onchange="saveReportPeriod()">
+            <!-- Month Selector Group -->
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <label for="sheet-month" style="font-weight: bold; margin: 0; white-space: nowrap;">Report Month:</label>
+                <select id="sheet-month" onchange="saveReportPeriod()" style="padding: 4px 8px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; font-size: 14px; background-color: #fff; height: 32px;">
                     <option value="January">January</option>
                     <option value="February">February</option>
                     <option value="March">March</option>
@@ -475,10 +476,10 @@
                 </select>
             </div>
 
-            <!-- Year Selector -->
-            <div class="selector-item">
-                <label for="sheet-year">Year:</label>
-                <select id="sheet-year" onchange="saveReportPeriod()">
+            <!-- Year Selector Group -->
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <label for="sheet-year" style="font-weight: bold; margin: 0; white-space: nowrap;">Year:</label>
+                <select id="sheet-year" onchange="saveReportPeriod()" style="padding: 4px 8px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; font-size: 14px; background-color: #fff; height: 32px;">
                     <option value="2021">2021</option>
                     <option value="2022">2022</option>
                     <option value="2023">2023</option>
