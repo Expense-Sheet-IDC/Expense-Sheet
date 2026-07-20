@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IDC G-8 Branch - Admin Access Control</title>
+    <title>IDC G-8 Branch - Live Administrative Gateway</title>
     <!-- SILENCES THE BROWSER FAVICON ERROR COMPLETELY -->
     <link rel="icon" href="data:,">
     <style>
@@ -25,7 +25,7 @@
         }
 
         .auth-master-wrap {
-            max-width: 420px;
+            max-width: 460px;
             width: 100%;
             background: #fff;
             padding: 40px 35px;
@@ -106,6 +106,44 @@
             text-decoration: underline;
         }
 
+        /* 👑 SUPERADMIN LIVE PANEL GRID STYLES */
+        .super-panel-wrap {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 2px dashed #e2e8f0;
+            text-align: left;
+            display: none; 
+        }
+
+        .super-panel-wrap h3 {
+            color: #002060;
+            font-size: 16px;
+            margin-bottom: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .user-table th {
+            background-color: #f1f5f9;
+            color: #334155;
+            padding: 8px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #cbd5e1;
+        }
+
+        .user-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #333;
+        }
+
         .auth-footer {
             margin-top: 30px;
             font-size: 11px;
@@ -119,27 +157,50 @@
 
     <div class="auth-master-wrap">
         <div class="idc-badge-emblem">IDC</div>
-        <h2 id="lblAuthState">Admin Portal Login</h2>
-        <p id="lblAuthDesc">Please enter your secure credentials to manage branch expenses.</p>
+        <h2 id="lblAuthState">Admin Live Login</h2>
+        <p id="lblAuthDesc">Apna unique admin credentials enter kar ke securely online connect hon.</p>
         
-        <input type="email" id="txtAuthEmail" class="auth-field" placeholder="Admin Email Address" required>
-        <input type="password" id="txtAuthPassword" class="auth-field" placeholder="Secure Password" required>
+        <!-- INPUT CONTROLS GRIDS -->
+        <input type="text" id="txtAuthUser" class="auth-field" placeholder="Admin Username" required>
+        <input type="password" id="txtAuthPassword" class="auth-field" placeholder="Admin Password" required>
         
         <button id="btnSubmitAuth" class="btn-auth-trigger">Secure Login</button>
         <div id="btnShiftState" class="auth-switch-link">Naya Admin Account Create Karein (Register)</div>
         
+        <!-- 👑 LIVE LISTING USER MANAGEMENT PANEL -->
+        <div id="superAdminPanel" class="super-panel-wrap">
+            <h3 style="margin-bottom: 15px;">👑 Registered Admin Accounts</h3>
+            
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Current Password</th>
+                        <th style="width: 35%; text-align: center;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="userTableBody">
+                    <!-- Javascript entries rows stream here -->
+                </tbody>
+            </table>
+
+            <!-- 🌟 PROPER SEEDHI ALIGNMENT: Dono buttons footer se theek upar inline fix -->
+            <div style="display: flex; gap: 10px; justify-content: space-between; align-items: center; margin-top: 25px; width: 100%;">
+                <button id="btnChangeSuperPass" style="flex: 1; background-color: #d97706; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; text-align: center; white-space: nowrap;">🔑 Change My Password</button>
+                <button id="btnSuperLogout" style="flex: 1; background-color: #dc2626; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; text-align: center; white-space: nowrap;">🚪 Logout Identity</button>
+            </div>
+        </div>
+
+        <!-- 👑 M. MOAZZAM DESIGN CREDITS FOOTER -->
         <div class="auth-footer">
             Designed by M. Moazzam | © 2026 All Rights Reserved
         </div>
     </div>
-
-    <!-- Script Placeholder for Part 2 -->
-</body>
-</html>
-    <!-- FIREBASE MODULE ENGINE MODULES -->
+    <!-- REAL-TIME CLOUD AUTHENTICATION MODULE MODULES -->
     <script type="module">
-        import { initializeApp } from "https://cloudflare.com";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://cloudflare.com";
+        import { initializeApp } from "https://gstatic.com";
+        import { getAuth, signOut } from "https://gstatic.com";
+        import { getFirestore, collection, doc, setDoc, getDoc, deleteDoc, getDocs } from "https://gstatic.com";
 
         // IMPORTANT TODO: Paste your exact credentials from Firebase Console here
         const firebaseConfig = {
@@ -151,71 +212,260 @@
             appId: "YOUR_APP_ID"
         };
 
-        // Engine Activation
+        // Live Cloud Activation Triggers
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getFirestore(app);
 
-        // Core Nodes References
-        const lblAuthState = document.getElementById('lblAuthState');
-        const lblAuthDesc = document.getElementById('lblAuthDesc');
-        const txtAuthEmail = document.getElementById('txtAuthEmail');
-        const txtAuthPassword = document.getElementById('txtAuthPassword');
-        const btnSubmitAuth = document.getElementById('btnSubmitAuth');
-        const btnShiftState = document.getElementById('btnShiftState');
+        // Core Configuration variables parameters settings (Case-Insensitive Setup)
+        let MY_SECRET_NAME = "Moazzam";        
+        let MY_SECRET_PASS = "Moazzam1451";     
 
         let isAuthenticationLoginState = true;
 
-        // Toggle Screen State logic (Shift between Login or Register view)
+        // UI DOM Nodes Mappings References
+        const lblAuthState = document.getElementById('lblAuthState');
+        const lblAuthDesc = document.getElementById('lblAuthDesc');
+        const txtAuthUser = document.getElementById('txtAuthUser');
+        const txtAuthPassword = document.getElementById('txtAuthPassword');
+        const btnSubmitAuth = document.getElementById('btnSubmitAuth');
+        const btnShiftState = document.getElementById('btnShiftState');
+        const superAdminPanel = document.getElementById('superAdminPanel');
+        const userTableBody = document.getElementById('userTableBody');
+        const btnSuperLogout = document.getElementById('btnSuperLogout');
+        const btnChangeSuperPass = document.getElementById('btnChangeSuperPass');
+
+        // Master Security Cloud Registry Synchronization Logic
+        async function forceSyncMasterCredentials() {
+            try {
+                const globalSettingRef = doc(db, "metadata", "superadmin_config");
+                const snapshotRecord = await getDoc(globalSettingRef);
+                if (snapshotRecord.exists()) {
+                    MY_SECRET_NAME = snapshotRecord.data().ownerUsername || "Moazzam";
+                    MY_SECRET_PASS = snapshotRecord.data().ownerPassword || "Moazzam1451";
+                } else {
+                    await setDoc(globalSettingRef, { ownerUsername: "Moazzam", ownerPassword: "Moazzam1451" });
+                }
+            } catch(e) {
+                console.log("Cloud Initialization System Overpass.");
+            }
+        }
+
+        function setLoginInterface() {
+            isAuthenticationLoginState = true;
+            lblAuthState.innerText = "Admin Live Login";
+            lblAuthDesc.innerText = "Apna unique admin credentials enter kar ke securely online connect hon.";
+            btnSubmitAuth.innerText = "Secure Login";
+            btnShiftState.innerText = "Naya Admin Account Create Karein (Register)";
+            btnShiftState.style.display = "block";
+            superAdminPanel.style.display = "none";
+            txtAuthUser.style.display = "block";
+            txtAuthPassword.style.display = "block";
+            btnSubmitAuth.style.display = "block";
+        }
+
+        // 👑 SUPERADMIN CONTROL INTERACTOR 1: LIVE SECURE LOGOUT IDENTITY FUNCTION
+        btnSuperLogout.onclick = function() {
+            sessionStorage.removeItem('idc_active_local_admin');
+            setLoginInterface(); 
+            alert("Super Admin Identity session wiped out successfully from cloud server.");
+        };
+
+        // 👑 SUPERADMIN CONTROL INTERACTOR 2: CLOUD REMOTE MASTER PASSWORD CHANGE UTILITY
+        btnChangeSuperPass.onclick = async function() {
+            const promptNewPass = prompt(`🔑 Super Admin Password Engine:\n\nActive Owner Username: ${MY_SECRET_NAME}\nActive Owner Password: ${MY_SECRET_PASS}\n\nNaya Secret Password type karein:`, MY_SECRET_PASS);
+            
+            if (promptNewPass === null) return;
+            if (promptNewPass.trim() === "") return alert("Password khali nahi rakha ja sakta!");
+
+            const finalPass = promptNewPass.trim();
+            try {
+                // Delete old collection registry pointers from dynamic nodes mapping
+                await deleteDoc(doc(db, "cloud_admins", MY_SECRET_NAME.toLowerCase()));
+                
+                MY_SECRET_PASS = finalPass;
+                
+                // Write new configuration keys onto dynamic storage partitions
+                await setDoc(doc(db, "metadata", "superadmin_config"), { ownerUsername: MY_SECRET_NAME, ownerPassword: MY_SECRET_PASS });
+                await setDoc(doc(db, "cloud_admins", MY_SECRET_NAME.toLowerCase()), { password: MY_SECRET_PASS, timestamp: Date.now() });
+                
+                alert(`✅ Success!\nSuperadmin password successfully updated to: ${MY_SECRET_PASS}\n\nSecurity Sync setup finished.`);
+                await renderUserManagementTable(); 
+            } catch(err) {
+                alert("Cloud Sync Master Modification Failed: " + err.message);
+            }
+        };
+        // 📋 REAL-TIME CLOUD USERS RENDERING COMPUTATION FRAMEWORK
+        async function renderUserManagementTable() {
+            userTableBody.innerHTML = "";
+            try {
+                const querySnapshot = await getDocs(collection(db, "cloud_admins"));
+                let staffUsers = [];
+                
+                querySnapshot.forEach((documentRecord) => {
+                    const idcUsername = documentRecord.id;
+                    const idcPassword = documentRecord.data().password || "••••";
+                    
+                    if (idcUsername.toLowerCase() !== MY_SECRET_NAME.toLowerCase()) {
+                        staffUsers.push({ username: idcUsername, password: idcPassword });
+                    }
+                });
+
+                if(staffUsers.length === 0) {
+                    userTableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#94a3b8; font-style:italic;">Koi staff account register nahi hai.</td></tr>`;
+                    return;
+                }
+
+                staffUsers.forEach(user => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="font-weight:600; color:#334155;">${user.username}</td>
+                        <td style="color:#0d9488; font-family:monospace; font-weight:bold;">${user.password}</td>
+                        <td style="text-align: center;">
+                            <div style="display:flex; gap:5px; justify-content:center;">
+                                <button class="btn-panel-edit" data-username="${user.username}" style="background-color:#d97706; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px; font-weight:bold;">Edit Pass</button>
+                                <button class="btn-panel-delete" data-username="${user.username}" style="background-color:#dc2626; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px; font-weight:bold;">Delete</button>
+                            </div>
+                        </td>
+                    `;
+                    userTableBody.appendChild(tr);
+                });
+
+                // EDIT STAFF PASSWORD TOOL ON SECURE CLOUD PARTITION
+                document.querySelectorAll('.btn-panel-edit').forEach(btn => {
+                    btn.onclick = async function(e) {
+                        const targetUser = e.target.dataset.username.toLowerCase();
+                        const oldPassword = querySnapshot.docs.find(d => d.id === targetUser)?.data().password || "";
+                        
+                        const newPassword = prompt(`🔑 Change Password for '${targetUser}':\nPurana Password: ${oldPassword}\n\nNaya Password input karein:`, oldPassword);
+                        
+                        if (newPassword === null) return; 
+                        if (newPassword.trim() === "") return alert("Password khali nahi ho sakta!");
+
+                        try {
+                            await setDoc(doc(db, "cloud_admins", targetUser), { password: newPassword.trim(), timestamp: Date.now() });
+                            alert(`✅ Done! Account '${targetUser}' ka password live cloud par successfully update ho gaya.`);
+                            await renderUserManagementTable(); 
+                        } catch(err) {
+                            alert("Cloud Edit Operation Failed: " + err.message);
+                        }
+                    };
+                });
+
+                // DELETE STAFF ACCOUNT TOOL FROM SECURE CLOUD PARTITION
+                document.querySelectorAll('.btn-panel-delete').forEach(btn => {
+                    btn.onclick = async function(e) {
+                        const targetToDelete = e.target.dataset.username.toLowerCase();
+                        if(confirm(`⚠️ WARNING:\nKya aap account '${targetToDelete}' aur us ka poora expense table records cloud database se permanently delete karna chahte hain?`)) {
+                            try {
+                                await deleteDoc(doc(db, "cloud_admins", targetToDelete));
+                                alert(`🗑️ Account '${targetToDelete}' has been deleted from cloud registry.`);
+                                await renderUserManagementTable();
+                            } catch(err) {
+                                alert("Cloud Delete Operation Failed: " + err.message);
+                            }
+                        }
+                    };
+                });
+            } catch(err) {
+                userTableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#dc2626;">Cloud Load Failure Exception.</td></tr>`;
+            }
+        }
+
+        // TRIGGER CONTROL PRIVILEGES GATES SUBMISSION CHECK LOOP
+        btnSubmitAuth.addEventListener('click', async () => {
+            const inputUser = txtAuthUser.value.trim(); 
+            const inputPass = txtAuthPassword.value;
+
+            if(!inputUser || !inputPass) {
+                return alert("Username aur Password enter karna lazmi hai!");
+            }
+
+            const targetRegistryRef = doc(db, "cloud_admins", inputUser.toLowerCase());
+
+            if(isAuthenticationLoginState) {
+                try {
+                    const snapRecord = await getDoc(targetRegistryRef);
+                    
+                    if(snapRecord.exists() && snapRecord.data().password === inputPass) {
+                        if (inputUser.toLowerCase() === MY_SECRET_NAME.toLowerCase()) {
+                            alert("👑 Welcome Super Admin Moazzam! Access Control Panel Activated.");
+                            lblAuthState.innerText = "Master Control Dashboard";
+                            lblAuthDesc.innerText = "Yahan se aap kisi bhi account ka password dekh, badal ya account remove kar sakte hain.";
+                            btnShiftState.style.display = "none";
+                            
+                            txtAuthUser.style.display = "none";
+                            txtAuthPassword.style.display = "none";
+                            btnSubmitAuth.style.display = "none";
+                            
+                            txtAuthUser.value = "";
+                            txtAuthPassword.value = "";
+                            
+                            superAdminPanel.style.display = "block";
+                            await renderUserManagementTable();
+                        } else {
+                            alert("Authentication successful! Welcome to IDC Live Cloud Ledger.");
+                            sessionStorage.setItem('idc_active_local_admin', inputUser.toLowerCase());
+                            window.location.href = "index.html"; 
+                        }
+                    } else {
+                        alert("Ghalat Live Username ya Password! Please dobara check karein.");
+                    }
+                } catch(err) {
+                    alert("Cloud Gateway Communication Failure: " + err.message);
+                }
+            } else {
+                try {
+                    const snapRecord = await getDoc(targetRegistryRef);
+                    if(inputUser.toLowerCase() === MY_SECRET_NAME.toLowerCase()) {
+                        return alert("Yeh name owner control ke liye reserved hai! Is par register nahi kiya ja sakta.");
+                    }
+                    if(snapRecord.exists()) {
+                        return alert("Yeh admin username pehle se register hai! Koi aur name rakhein.");
+                    }
+
+                    await setDoc(targetRegistryRef, { password: inputPass, timestamp: Date.now() });
+                    alert("Naya Admin Account kamyabi se ban gaya hai!");
+                    
+                    txtAuthUser.value = '';
+                    txtAuthPassword.value = '';
+                    setLoginInterface();
+                } catch(err) {
+                    alert("Cloud Workspace Registration Error: " + err.message);
+                }
+            }
+        });
+
         btnShiftState.addEventListener('click', () => {
             isAuthenticationLoginState = !isAuthenticationLoginState;
+            superAdminPanel.style.display = "none";
             if(isAuthenticationLoginState) {
-                lblAuthState.innerText = "Admin Portal Login";
-                lblAuthDesc.innerText = "Please enter your secure credentials to manage branch expenses.";
-                btnSubmitAuth.innerText = "Secure Login";
-                btnShiftState.innerText = "Naya Admin Account Create Karein (Register)";
+                setLoginInterface();
             } else {
-                lblAuthState.innerText = "Register New Administrator";
-                lblAuthDesc.innerText = "Create an isolated administrative account for private ledger logs.";
+                lblAuthState.innerText = "Register New Live Admin";
+                lblAuthDesc.innerText = "Apna alag private account banane ke liye details enter karein.";
                 btnSubmitAuth.innerText = "Create Account";
                 btnShiftState.innerText = "Pehle se account majood hai? Login Karein";
             }
         });
 
-        // Trigger Security Authentication Operations
-        btnSubmitAuth.addEventListener('click', async () => {
-            const email = txtAuthEmail.value.trim();
-            const pass = txtAuthPassword.value;
-
-            if(!email || !pass) {
-                return alert("Email aur Password mandatory fields hain!");
+        // Intercepting Enter Key logic setups mapping inputs nodes
+        function handleKeyboardEnter(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                btnSubmitAuth.click();
             }
+        }
+        txtAuthUser.addEventListener("keydown", handleKeyboardEnter);
+        txtAuthPassword.addEventListener("keydown", handleKeyboardEnter);
 
-            try {
-                if(isAuthenticationLoginState) {
-                    // Process Login Gateway Verification
-                    await signInWithEmailAndPassword(auth, email, pass);
-                    alert("Authentication successful! Welcome to IDC Ledger.");
-                    window.location.href = "index.html"; // Dynamic route shift to main interface
-                } else {
-                    // Process Secure Dynamic Registration Account System
-                    await createUserWithEmailAndPassword(auth, email, pass);
-                    alert("Admin Account successfully deployed! Please log in now.");
-                    // Reset to login screen interface layout automatically
-                    isAuthenticationLoginState = false;
-                    btnShiftState.click();
-                }
-            } catch (err) {
-                alert("Gate Exception Error: " + err.message);
-            }
-        });
-
-        // Session Watcher Gate (If admin session active, bypass login and redirect to portal)
-        onAuthStateChanged(auth, (user) => {
-            if(user) {
+        // System Core Initialization Sync
+        (async () => {
+            await forceSyncMasterCredentials();
+            if(sessionStorage.getItem('idc_active_local_admin')) {
                 window.location.href = "index.html";
             }
-        });
-       </script>
+        })();
+    </script>
 </body>
 </html>
-
