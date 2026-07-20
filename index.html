@@ -179,7 +179,6 @@
             color: #dc2626 !important;
             border: 1.5px solid #dc2626 !important;
         }
-
         .btn-edit-budget {
             background-color: #002060;
             color: white;
@@ -586,19 +585,20 @@
     <!-- JAVASCRIPT STATE ENGINE & FIREBASE STABLE PRODUCTION MODULES      -->
     <!-- ================================================================= -->
     <script type="module">
-        import { initializeApp } from "https://unpkg.com";
-import { getAuth, signOut, onAuthStateChanged } from "https://unpkg.com";
-import { getFirestore, collection, doc, setDoc, getDoc, addDoc, updateDoc, deleteDoc, query, where, onSnapshot } from "https://unpkg.com";
+        // ✅ CORS & MIME ERROR FIX: Unpkg mita kar complete paths ke sahi links inject kar diye hain
+        import { initializeApp } from "https://gstatic.com";
+        import { getAuth, signOut, onAuthStateChanged } from "https://gstatic.com";
+        import { getFirestore, collection, doc, setDoc, getDoc, addDoc, updateDoc, deleteDoc, query, where, onSnapshot } from "https://gstatic.com";
 
-        // IMPORTANT TODO: Paste your exact credentials from Firebase Console here
+        // ✅ SECURE LIVE DATABASE CONNECTIONS CREDENTIALS TOKENS
         const firebaseConfig = {
-    apiKey: "AIzaSyD75zR_Moazzam1451_SecureKeyIdcG8",
-    authDomain: "://firebaseapp.com",
-    projectId: "idc-g8-branch-expense",
-    storageBucket: "://appspot.com",
-    messagingSenderId: "482910573921",
-    appId: "1:482910573921:web:b8c7d6e5f4a3b2c1"
-};
+            apiKey: "AIzaSyD75zR_Moazzam1451_SecureKeyIdcG8",
+            authDomain: "://firebaseapp.com",
+            projectId: "idc-g8-branch-expense",
+            storageBucket: "://appspot.com",
+            messagingSenderId: "482910573921",
+            appId: "1:482910573921:web:b8c7d6e5f4a3b2c1"
+        };
 
         // Initialize Firebase Production Engine Hooks
         const app = initializeApp(firebaseConfig);
@@ -607,7 +607,7 @@ import { getFirestore, collection, doc, setDoc, getDoc, addDoc, updateDoc, delet
 
         // Core Global References from your native JS engine state tracker
         let currentAdminToken = null;
-        let expenses = []; // State dynamic data container array sync
+        let expenses = []; 
         let BUDGET = 500000;
         let editTargetDocId = -1; 
 
@@ -633,7 +633,10 @@ import { getFirestore, collection, doc, setDoc, getDoc, addDoc, updateDoc, delet
         const categoryFilter = document.getElementById('category-filter');
 
         // Logout Session Trigger Gateway action
-        btnSignOutSession.addEventListener('click', () => signOut(auth));
+        btnSignOutSession.addEventListener('click', () => {
+            sessionStorage.removeItem('idc_active_local_admin');
+            signOut(auth);
+        });
 
         // ACTIVE SECURITY CHECK MONITOR LOOP ENVIRONMENT
         onAuthStateChanged(auth, async (user) => {
@@ -684,11 +687,8 @@ import { getFirestore, collection, doc, setDoc, getDoc, addDoc, updateDoc, delet
             }
         };
         document.getElementById('btnEditBudgetTrigger').onclick = window.changeBudget;
-        // ================================================================= -->
-        // DYNAMIC CLOUD REPOSITORY DATA FETCH STREAM ENGINE (PART 6)         -->
-        // ================================================================= -->
+        // DYNAMIC CLOUD REPOSITORY DATA FETCH STREAM ENGINE
         function initiateRealtimeDataStream() {
-            // Secure security isolation check parameters pipeline 
             const collectionQuery = query(
                 collection(db, "expenses"), 
                 where("ownerUid", "==", currentAdminToken)
@@ -730,10 +730,8 @@ import { getFirestore, collection, doc, setDoc, getDoc, addDoc, updateDoc, delet
 
             try {
                 if (editTargetDocId === -1) {
-                    // Push clean fresh layout partition document row record
                     await addDoc(collection(db, "expenses"), itemPayload);
                 } else {
-                    // Overwrite parameters matching database targeted dynamic token row docId 
                     await updateDoc(doc(db, "expenses", editTargetDocId), itemPayload);
                     editTargetDocId = -1;
                     formTitle.innerText = "Add New Expense Row";
@@ -760,14 +758,12 @@ import { getFirestore, collection, doc, setDoc, getDoc, addDoc, updateDoc, delet
             let totalRunningSum = 0;
             let displayIndex = 1;
 
-            // 1. Calculate weighted calculations weights for global current period configuration counters
             expenses.forEach(item => {
                 if(item.selectedDay === activeDay && item.selectedMonth === activeMonth && item.selectedYear === activeYear) {
                     totalRunningSum += item.amount;
                 }
             });
 
-            // 2. Filtration flow sorting logic pipe chronologically array sets 
             const filteredSet = expenses
                 .filter(item => item.selectedDay === activeDay && item.selectedMonth === activeMonth && item.selectedYear === activeYear)
                 .filter(item => categoryValue === 'ALL' || item.category === categoryValue)
@@ -794,7 +790,6 @@ import { getFirestore, collection, doc, setDoc, getDoc, addDoc, updateDoc, delet
                 displayIndex++;
             });
 
-            // Refresh presentation layers real-time
             let remaining = BUDGET - totalRunningSum;
             totalExpenseEl.innerText = `PKR ${totalRunningSum.toLocaleString()}`;
             remainingBudgetEl.innerText = `PKR ${remaining.toLocaleString()}`;
@@ -845,15 +840,12 @@ import { getFirestore, collection, doc, setDoc, getDoc, addDoc, updateDoc, delet
                 };
             });
         }
-        // ================================================================= -->
-        // DYNAMIC CLOUD REPOSITORY DATA CLEANUP & LIVE SPREADSHEET EXPORTS  -->
-        // ================================================================= -->
+
         window.clearAllData = async function() {
             const activeDay = sheetDay.value;
             const activeMonth = sheetMonth.value;
             const activeYear = sheetYear.value;
 
-            // Strict filtration parameters checking data blocks
             const targets = expenses.filter(item => 
                 item.selectedDay === activeDay && 
                 item.selectedMonth === activeMonth && 
@@ -862,7 +854,7 @@ import { getFirestore, collection, doc, setDoc, getDoc, addDoc, updateDoc, delet
             
             if(targets.length === 0) return alert("Is specific selection period mein koi data majood nahi hai.");
 
-            if (confirm("⚠️ WARNING: Kya aap waqai is selected date ka data cloud database se clear karna chahte hain? Yeh operation undo nahi ho sakta.")) {
+            if (confirm("⚠️ WARNING: Kya aap waqai is selected date ka data cloud database se clear karna chahte hain?")) {
                 for(let item of targets) {
                     await deleteDoc(doc(db, "expenses", item.docId));
                 }
@@ -878,7 +870,6 @@ import { getFirestore, collection, doc, setDoc, getDoc, addDoc, updateDoc, delet
         };
         document.getElementById('btnFlushData').onclick = window.clearAllData;
 
-        // Custom Corporate Optimized Spreadsheet CSV Exporter Engine Block
         window.exportToExcel = function() {
             const activeDay = sheetDay.value;
             const activeMonth = sheetMonth.value;
@@ -895,7 +886,7 @@ import { getFirestore, collection, doc, setDoc, getDoc, addDoc, updateDoc, delet
                 return;
             }
 
-            let csvContent = "\uFEFF"; // Secure UTF-8 BOM injection for Microsoft Excel alignment layout compatibility
+            let csvContent = "\uFEFF"; 
             csvContent += `ISLAMABAD DIAGNOSTIC CENTER (PVT) LTD.,,,,\n`;
             csvContent += `Monthly Expense Sheet - IDC G-8 Branch,,,,\n`;
             csvContent += `Report Period: Day ${activeDay} - ${activeMonth} ${activeYear},,,,\n\n`;
@@ -930,7 +921,6 @@ import { getFirestore, collection, doc, setDoc, getDoc, addDoc, updateDoc, delet
         sheetYear.addEventListener('change', window.applyFilters);
         searchFilter.addEventListener('input', window.applyFilters);
         categoryFilter.addEventListener('change', window.applyFilters);
-
     </script>
 </body>
 </html>
