@@ -1,10 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDC G-8 Branch - Monthly Expense Portal</title>
+    <!-- SILENCES THE BROWSER FAVICON ERROR COMPLETELY -->
+    <link rel="icon" href="data:,">
+    
+    <!-- DESKTOP AND PORTAL ENGINE CSS STYLES -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f9;
+            color: #333;
+            padding: 20px;
+        }
+
+        /* ACCOUNT UTILITIES BAR */
+        .admin-meta-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f1f5f9;
+            padding: 10px 20px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            border: 1px solid #e2e8f0;
+            font-size: 14px;
+            color: #334155;
+        }
+
+        .btn-logout-gate {
+            background-color: #dc2626;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        /* APPLICATION CONTENT BOX */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        /* HEADER & GRAPHIC LOGO ALIGNMENT */
+        .main-header {
+            text-align: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+        }
+
+        .header-title-container {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .idc-badge-emblem {
+            width: 50px;
+            height: 50px;
+            background-color: #AA0719;
+            border: 4.5px solid #002060;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 900;
+            font-size: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        }
+
+        .main-header h1 {
+            color: #002060;
+            font-size: 26px;
+            font-weight: 700;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .main-header p {
+            color: #555;
+            font-style: italic;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+        /* FIXED ALIGNMENT DYNAMIC SELECTION BAR */
+        .custom-selector-bar {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+            padding: 15px 0;
+            margin-bottom: 25px;
+            width: 100%;
+            background-color: transparent;
+            border-bottom: 2px solid #002060;
+        }
+
+        .custom-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .custom-group label {
+            font-weight: bold;
+            margin: 0 !important;
+            padding: 0 !important;
+            white-space: nowrap;
+            font-size: 14px;
+            color: #002060;
+        }
+
+        .custom-group select {
+            padding: 4px 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 14px;
+            background-color: #fff;
+            height: 32px;
+            min-width: 80px;
+            box-sizing: border-box;
+            cursor: pointer;
+        }
+
+        /* Summary Grid */
+        .summary-section {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            padding: 20px;
+            border-radius: 6px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        .card h3 {
+            font-size: 14px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .card p {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .budget-card { background-color: #e6f0fa; color: #002060; }
+        .expense-card { background-color: #fde8e8; color: #9b1c1c; }
+        .remaining-card { background-color: #def7ec; color: #03543f; }
+        
+        .budget-danger {
+            background-color: #fde8e8 !important;
+            color: #dc2626 !important;
+            border: 1.5px solid #dc2626 !important;
+        }
+        .btn-edit-budget {
+            background-color: #002060;
+            color: white;
+            border: none;
+            padding: 3px 8px;
+            font-size: 11px;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        /* Toolbar Actions */
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .btn-toolbar {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            color: white;
+            background-color: #0284c7;
+            transition: opacity 0.2s;
+        }
+
+        .btn-toolbar:hover { opacity: 0.9; }
+        .btn-clear-data { background-color: #dc2626; }
+        .btn-excel { background-color: #16a34a; }
+
+        /* Filter bar block styling */
+        .filter-section {
+            background-color: #f8fafc;
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            border: 1px solid #e2e8f0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .filter-section input, .filter-section select {
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            font-size: 14px;
+            width: 100%;
+        }
+
+        /* Form Styling */
+        .form-section {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 30px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .form-section h2 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #002060;
+        }
+
+        #expense-form {
+            display: grid;
+            grid-template-columns: 1.5fr 2fr 3.5fr 1.5fr 1.2fr;
+            gap: 10px;
+        }
+
+        #expense-form input, #expense-form select {
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            font-size: 14px;
+            width: 100%;
+        }
+
+        .btn-add {
+            background-color: #002060;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th {
+            background-color: #002060;
+            color: white;
+            font-weight: 600;
+            padding: 12px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        td {
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            font-size: 14px;
+        }
+
+        tr:nth-child(even) { background-color: #f8fafc; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+
+        .grand-total-row td {
+            background-color: #f1f5f9;
+            border-top: 2px solid #002060;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .action-container {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+        }
+
+        .btn-action-edit {
+            background-color: #d97706;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .btn-delete {
+            background-color: #dc2626;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        /* Verification Signature Section Layout */
+        .signature-section {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-top: 60px;
+            padding-top: 20px;
+            text-align: center;
+        }
+
+        .sig-box {
+            border-top: 1.5px dashed #333;
+            padding-top: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #444;
+        }
+
+        /* SYSTEM FOOTER WITH AUTHORIZATION CREDITS */
+        .portal-footer {
+            text-align: center; 
+            margin-top: 50px; 
+            padding-top: 15px; 
+            border-top: 1px solid #e2e8f0; 
+            font-size: 13px; 
+            color: #64748b; 
+            font-weight: 500;
+        }
+
+        .portal-footer-author {
+            color: #002060; 
+            font-weight: 700;
+        }
+
+        /* Mobile Screens Responsive Grid Settings */
+        @media (max-width: 600px) {
+            .custom-selector-bar {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 15px !important;
+                padding: 15px !important;
+                box-sizing: border-box;
+            }
+
+            .custom-group {
+                justify-content: space-between !important;
+                width: 100% !important;
+                background: #f9f9f9;
+                padding: 8px 12px;
+                border-radius: 6px;
+                border: 1px solid #eee;
+                box-sizing: border-box;
+            }
+
+            .custom-group select {
+                width: 60% !important;
+                height: 38px !important;
+            }
+            
+            #expense-form { grid-template-columns: 1fr; }
+            .summary-section { grid-template-columns: 1fr; }
+        }
+
+        /* PRINT MANAGEMENT FOR EXCEL/PDF LOOK */
+        @media print {
+            body { background-color: white; padding: 0; }
+            .container { box-shadow: none; padding: 0; width: 100%; }
+            .form-section, .toolbar, .filter-section, .action-container, .portal-footer, th:last-child, td:last-child, .btn-edit-budget, .admin-meta-header {
+                display: none !important;
+            }
+            .custom-selector-bar select {
+                border: none !important;
+                background: transparent !important;
+                appearance: none !important;
+                font-size: 16px !important;
+                color: #002060 !important;
+            }
+            th, td { padding: 10px; border: 1px solid #333; print-color-adjust: exact; }
+            .card { border: 1px solid #333 !important; }
+            .signature-section { margin-top: 100px; page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+    <!-- MAIN APPLICATION CONTAINER -->
+    <div id="appWorkspace" class="container" style="display: none;">
+        
+        <!-- SESSION HEADER CONTROL BAR -->
+        <div class="admin-meta-header">
+            <div><strong>Active Administrator: </strong><span id="lblActiveAdminEmail">Checking Session...</span></div>
+            <button id="btnSignOutSession" class="btn-logout-gate">Logout Account</button>
+        </div>
+
+        <!-- CORPORATE HEADER AREA -->
+        <header class="main-header">
+            <div class="header-title-container">
+                <div class="idc-badge-emblem">IDC</div>
+                <h1>ISLAMABAD DIAGNOSTIC CENTER (PVT) LTD.</h1>
+            </div>
+            <p>Monthly Expense Sheet IDC G-8 Branch Islamabad</p>
+        </header>
+
+        <!-- FLEXBOX FIXED SELECTOR PERIOD BAR -->
+        <div class="custom-selector-bar">
+            <!-- Day Selector Group -->
+            <div class="custom-group">
+                <label for="sheet-day">Date:</label>
+                <select id="sheet-day">
+                    <script>
+                        for(let i=1; i<=31; i++) {
+                            document.write(`<option value="${i}">${i}</option>`);
+                        }
+                    </script>
+                </select>
+            </div>
+
+            <!-- Month Selector Group -->
+            <div class="custom-group">
+                <label for="sheet-month">Report Month:</label>
+                <select id="sheet-month">
+                    <option value="January">January</option>
+                    <option value="February">February</option>
+                    <option value="March">March</option>
+                    <option value="April">April</option>
+                    <option value="May">May</option>
+                    <option value="June" selected>June</option>
+                    <option value="July">July</option>
+                    <option value="August">August</option>
+                    <option value="September">September</option>
+                    <option value="October">October</option>
+                    <option value="November">November</option>
+                    <option value="December">December</option>
+                </select>
+            </div>
+
+            <!-- Year Selector Group -->
+            <div class="custom-group">
+                <label for="sheet-year">Year:</label>
+                <select id="sheet-year">
+                    <option value="2024">2024</option>
+                    <option value="2025">2025</option>
+                    <option value="2026" selected>2026</option>
+                    <option value="2027">2027</option>
+                    <option value="2028">2028</option>
+                    <option value="2029">2029</option>
+                    <option value="2030">2030</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- LIVE SUMMARY WIDGET BLOCKS -->
+        <section class="summary-section">
+            <div class="card budget-card">
+                <h3>Total Budget</h3>
+                <p id="total-budget">PKR 500,000</p>
+                <button class="btn-edit-budget" id="btnEditBudgetTrigger">Edit Budget</button>
+            </div>
+            <div class="card expense-card">
+                <h3>Total Expense</h3>
+                <p id="total-expense">PKR 0</p>
+            </div>
+            <div class="card remaining-card" id="remaining-card-block">
+                <h3>Remaining</h3>
+                <p id="remaining-budget">PKR 500,000</p>
+            </div>
+        </section>
+        <!-- DYNAMIC ACTION TOOLBAR -->
+        <div class="toolbar">
+            <button class="btn-toolbar btn-excel" id="btnExportToExcel">📊 Export to Excel</button>
+            <button class="btn-toolbar btn-clear-data" id="btnFlushData">🗑️ Clear Sheet Data</button>
+            <button class="btn-toolbar" id="btnPrintReport">🖨️ Save Report (PDF) / Print</button>
+        </div>
+
+        <!-- NEW EXPENSE ROW FORM ENGINE -->
+        <section class="form-section">
+            <h2 id="form-title">Add New Expense Row</h2>
+            <form id="expense-form" onsubmit="return false;">
+                <input type="date" id="exp-date" required>
+                <select id="exp-category" required>
+                    <option value="" disabled selected>Select Category</option>
+                    <option value="Lab Chemicals">Lab Chemicals</option>
+                    <option value="Medical Supplies">Medical Supplies</option>
+                    <option value="Branch Maintenance">Branch Maintenance</option>
+                    <option value="Utilities">Utilities</option>
+                    <option value="Refreshments & Welfare">Refreshments & Welfare</option>
+                    <option value="Printing & Stationery">Printing & Stationery</option>
+                </select>
+                <input type="text" id="exp-desc" placeholder="Description / Item Details" required>
+                <input type="number" id="exp-amount" placeholder="Amount (PKR)" required>
+                <button type="button" id="btn-submit" class="btn-add">Add Entry</button>
+            </form>
+        </section>
+
+        <!-- LIVE FILTERING SEARCH AND FILTER CONTROLS -->
+        <section class="filter-section">
+            <div>
+                <input type="text" id="search-filter" placeholder="🔍 Search description or details...">
+            </div>
+            <div>
+                <select id="category-filter">
+                    <option value="ALL">All Categories (No Filter)</option>
+                    <option value="Lab Chemicals">Lab Chemicals</option>
+                    <option value="Medical Supplies">Medical Supplies</option>
+                    <option value="Branch Maintenance">Branch Maintenance</option>
+                    <option value="Utilities">Utilities</option>
+                    <option value="Refreshments & Welfare">Refreshments & Welfare</option>
+                    <option value="Printing & Stationery">Printing & Stationery</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- UNIFIED ACCOUNTING EXPENSE TABLE -->
+        <section class="table-section">
+            <table id="expense-table">
+                <thead>
+                    <tr>
+                        <th style="width: 8%;">Sr. No.</th>
+                        <th style="width: 12%;">Date</th>
+                        <th style="width: 20%;">Expense Category</th>
+                        <th style="width: 32%;">Description / Item Details</th>
+                        <th style="width: 13%;">Amount (PKR)</th>
+                        <th style="width: 15%;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <!-- JavaScript Dynamic Injections will stream here -->
+                </tbody>
+                <tfoot>
+                    <tr class="grand-total-row">
+                        <td colspan="4" style="text-align: right; font-weight: bold;">Grand Total:</td>
+                        <td id="grand-total-val" style="font-weight: bold; text-align: center;">0</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </section>
+
+        <!-- OFFICIAL CORPORATE SIGN SIGNATURE BOXES -->
+        <section class="signature-section">
+            <div class="sig-box">Prepared By</div>
+            <div class="sig-box">Checked By</div>
+            <div class="sig-box">Approved By</div>
+        </section>
+
+        <!-- M. MOAZZAM CREDIT DESIGN RIGHTS FOOTER -->
+        <footer class="portal-footer">
+            Designed by <span class="portal-footer-author">M. Moazzam</span> | © 2026 All Rights Reserved
+        </footer>
+    </div>
+       <!-- ================================================================= -->
+    <!-- JAVASCRIPT SYSTEM CONTROLLER STATE ENGINE - PART 1               -->
+    <!-- ================================================================= -->
+    <script>
+        let currentAdminToken = sessionStorage.getItem('idc_active_local_admin') || "Staff";
+        let expenses = JSON.parse(localStorage.getItem('idc_local_expenses')) || []; 
+        let BUDGET = parseFloat(localStorage.getItem('idc_local_budget_' + currentAdminToken)) || 500000;
+        let editTargetDocId = -1; 
+
+        // DOM Nodes Framework References
+        const appWorkspace = document.getElementById('appWorkspace');
+        const lblActiveAdminEmail = document.getElementById('lblActiveAdminEmail');
+        const btnSignOutSession = document.getElementById('btnSignOutSession');
+        const form = document.getElementById('expense-form');
+        const formTitle = document.getElementById('form-title');
+        const btnSubmit = document.getElementById('btn-submit');
+        const tableBody = document.getElementById('table-body');
+        const totalBudgetEl = document.getElementById('total-budget');
+        const totalExpenseEl = document.getElementById('total-expense');
+        const remainingBudgetEl = document.getElementById('remaining-budget');
+        const grandTotalValEl = document.getElementById('grand-total-val');
+        const remainingCardBlock = document.getElementById('remaining-card-block');
+        const sheetDay = document.getElementById('sheet-day');
+        const sheetMonth = document.getElementById('sheet-month');
+        const sheetYear = document.getElementById('sheet-year');
+        const searchFilter = document.getElementById('search-filter');
+        const categoryFilter = document.getElementById('category-filter');
+
+        // Security Authentication Router Gate Control
+        if(!sessionStorage.getItem('idc_active_local_admin')) {
+            window.location.href = "login.html";
+        } else {
+            lblActiveAdminEmail.innerText = currentAdminToken.toUpperCase();
+            appWorkspace.style.display = 'block';
+            initPeriodDefaultsSetting();
+            totalBudgetEl.innerText = `PKR ${BUDGET.toLocaleString()}`;
+        }
+
+        btnSignOutSession.addEventListener('click', () => {
+            sessionStorage.removeItem('idc_active_local_admin');
+            window.location.href = "login.html";
+        });
+        function initPeriodDefaultsSetting() {
+            const currentMonthIndex = new Date().getMonth();
+            const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            sheetDay.value = new Date().getDate().toString();
+            sheetMonth.value = months[currentMonthIndex];
+            sheetYear.value = new Date().getFullYear().toString();
+            document.getElementById('exp-date').value = new Date().toISOString().split('T')[0];
+        }
+
+        window.changeBudget = function() {
+            let newBudget = prompt("Enter new Total Budget (PKR):", BUDGET);
+            if (newBudget !== null && !isNaN(newBudget) && newBudget.trim() !== "") {
+                BUDGET = parseFloat(newBudget);
+                localStorage.setItem('idc_local_budget_' + currentAdminToken, BUDGET);
+                totalBudgetEl.innerText = `PKR ${BUDGET.toLocaleString()}`;
+                applyFilters();
+            }
+        };
+        document.getElementById('btnEditBudgetTrigger').onclick = window.changeBudget;
+
+        btnSubmit.addEventListener('click', () => {
+            const date = document.getElementById('exp-date').value;
+            const category = document.getElementById('exp-category').value;
+            const desc = document.getElementById('exp-desc').value;
+            const amount = parseFloat(document.getElementById('exp-amount').value);
+
+            if(!date || !category || !desc.trim() || isNaN(amount)) {
+                return alert("Tamam fields complete filled hona lazmi hain.");
+            }
+
+            if (editTargetDocId === -1) {
+                let newRecord = {
+                    docId: Date.now().toString(),
+                    date, category, desc: desc.trim(), amount, ownerUid: currentAdminToken,
+                    selectedDay: sheetDay.value, selectedMonth: sheetMonth.value, selectedYear: sheetYear.value
+                };
+                expenses.push(newRecord);
+            } else {
+                let target = expenses.find(r => r.docId === editTargetDocId);
+                if(target) {
+                    target.date = date; target.category = category; target.desc = desc.trim(); target.amount = amount;
+                    target.selectedDay = sheetDay.value; target.selectedMonth = sheetMonth.value; target.selectedYear = sheetYear.value;
+                }
+                editTargetDocId = -1;
+                formTitle.innerText = "Add New Expense Row";
+                btnSubmit.innerText = "Add Entry";
+                btnSubmit.style.backgroundColor = "#002060";
+            }
+
+            localStorage.setItem('idc_local_expenses', JSON.stringify(expenses));
+            form.reset();
+            document.getElementById('exp-date').value = new Date().toISOString().split('T')[0];
+            applyFilters();
+        });
+        window.applyFilters = function() {
+            const activeDay = sheetDay.value;
+            const activeMonth = sheetMonth.value;
+            const activeYear = sheetYear.value;
+            const searchValue = searchFilter.value.toLowerCase().trim();
+            const categoryValue = categoryFilter.value;
+
+            tableBody.innerHTML = '';
+            let filteredTotal = 0;
+            let totalRunningSum = 0;
+            let displayIndex = 1;
+
+            // 1. Calculate active totals logic counters
+            expenses.forEach(item => {
+                if(item.selectedDay === activeDay && item.selectedMonth === activeMonth && item.selectedYear === activeYear && item.ownerUid === currentAdminToken) {
+                    totalRunningSum += item.amount;
+                }
+            });
+
+            // 2. Filter display rows matrix setup array bounds
+            const filteredSet = expenses
+                .filter(item => item.selectedDay === activeDay && item.selectedMonth === activeMonth && item.selectedYear === activeYear && item.ownerUid === currentAdminToken)
+                .filter(item => categoryValue === 'ALL' || item.category === categoryValue)
+                .filter(item => item.desc.toLowerCase().includes(searchValue) || item.category.toLowerCase().includes(searchValue))
+                .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            filteredSet.forEach((item) => {
+                filteredTotal += item.amount;
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="text-center" style="font-weight: 600;">${displayIndex}</td>
+                    <td class="text-center">${item.date}</td>
+                    <td>${item.category}</td>
+                    <td>${item.desc}</td>
+                    <td class="text-right">${item.amount.toLocaleString()}</td>
+                    <td class="text-center">
+                        <div class="action-container">
+                            <button class="btn-action-edit" data-id="${item.docId}">Edit</button>
+                            <button class="btn-delete" data-id="${item.docId}">Delete</button>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+                displayIndex++;
+            });
+
+            // Refresh metric counters metrics views layers
+            let remaining = BUDGET - totalRunningSum;
+            totalExpenseEl.innerText = `PKR ${totalRunningSum.toLocaleString()}`;
+            remainingBudgetEl.innerText = `PKR ${remaining.toLocaleString()}`;
+            grandTotalValEl.innerText = filteredTotal.toLocaleString();
+            
+            if (remaining < 0) {
+                remainingCardBlock.classList.add('budget-danger');
+            } else {
+                remainingCardBlock.classList.remove('budget-danger');
+            }
+            attachDynamicRowListeners();
+        };
+        function attachDynamicRowListeners() {
+            document.querySelectorAll('.btn-delete').forEach(btn => {
+                btn.onclick = (e) => {
+                    const docId = e.target.dataset.id;
+                    if (confirm("Are you sure you want to delete this expense row?")) {
+                        expenses = expenses.filter(r => r.docId !== docId);
+                        localStorage.setItem('idc_local_expenses', JSON.stringify(expenses));
+                        applyFilters();
+                    }
+                };
+            });
+
+            document.querySelectorAll('.btn-action-edit').forEach(btn => {
+                btn.onclick = (e) => {
+                    const docId = e.target.dataset.id;
+                    const target = expenses.find(r => r.docId === docId);
+                    if (!target) return;
+
+                    editTargetDocId = docId;
+                    document.getElementById('exp-date').value = target.date;
+                    document.getElementById('exp-category').value = target.category;
+                    document.getElementById('exp-desc').value = target.desc;
+                    document.getElementById('exp-amount').value = target.amount;
+
+                    formTitle.innerText = "Edit Selected Expense Row";
+                    btnSubmit.innerText = "Update Row";
+                    btnSubmit.style.backgroundColor = "#d97706";
+                    window.scrollTo({ top: 150, behavior: 'smooth' });
+                };
+            });
+        }
+
+        window.clearAllData = function() {
+            const activeDay = sheetDay.value;
+            const activeMonth = sheetMonth.value;
+            const activeYear = sheetYear.value;
+            if (confirm("⚠️ WARNING: Kya aap waqai is selected date ka data clear karna chahte hain?")) {
                 expenses = expenses.filter(item => !(item.selectedDay === activeDay && item.selectedMonth === activeMonth && item.selectedYear === activeYear && item.ownerUid === currentAdminToken));
                 localStorage.setItem('idc_local_expenses', JSON.stringify(expenses));
                 applyFilters();
             }
         };
         document.getElementById('btnFlushData').onclick = window.clearAllData;
-
         window.exportToExcel = function() {
             const activeDay = sheetDay.value; 
             const activeMonth = sheetMonth.value; 
@@ -19,6 +793,7 @@
                 csvContent += `${index + 1},${item.date},"${item.category}","${item.desc.replace(/"/g, '""')}",${item.amount}\n`;
             });
             csvContent += `,,,Grand Total:,${total}\n`;
+            
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a"); 
             link.setAttribute("href", URL.createObjectURL(blob));
