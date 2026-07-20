@@ -417,16 +417,16 @@
     </style>
 </head>
 <body>
-    <!-- MAIN WORKSPACE PORTAL CONTAINER -->
+    <!-- MAIN APPLICATION CONTAINER -->
     <div id="appWorkspace" class="container" style="display: none;">
         
-        <!-- SESSION HEADER USER UTILITIES -->
+        <!-- SESSION HEADER CONTROL BAR -->
         <div class="admin-meta-header">
             <div><strong>Active Administrator: </strong><span id="lblActiveAdminEmail">Checking Session...</span></div>
             <button id="btnSignOutSession" class="btn-logout-gate">Logout Account</button>
         </div>
 
-        <!-- CORPORATE EMBLEM & HEADER -->
+        <!-- CORPORATE HEADER AREA -->
         <header class="main-header">
             <div class="header-title-container">
                 <div class="idc-badge-emblem">IDC</div>
@@ -435,9 +435,9 @@
             <p>Monthly Expense Sheet IDC G-8 Branch Islamabad</p>
         </header>
 
-        <!-- ALIGNED RESPONSIVE FLEXBOX SELECTION BAR -->
+        <!-- FLEXBOX FIXED SELECTOR PERIOD BAR -->
         <div class="custom-selector-bar">
-            <!-- Day Selection Group -->
+            <!-- Day Selector Group -->
             <div class="custom-group">
                 <label for="sheet-day">Date:</label>
                 <select id="sheet-day">
@@ -449,7 +449,7 @@
                 </select>
             </div>
 
-            <!-- Month Selection Group -->
+            <!-- Month Selector Group -->
             <div class="custom-group">
                 <label for="sheet-month">Report Month:</label>
                 <select id="sheet-month">
@@ -468,7 +468,7 @@
                 </select>
             </div>
 
-            <!-- Year Selection Group -->
+            <!-- Year Selector Group -->
             <div class="custom-group">
                 <label for="sheet-year">Year:</label>
                 <select id="sheet-year">
@@ -483,7 +483,7 @@
             </div>
         </div>
 
-        <!-- METRIC METERS DATA SUMMARY GRIDS -->
+        <!-- LIVE SUMMARY WIDGET BLOCKS -->
         <section class="summary-section">
             <div class="card budget-card">
                 <h3>Total Budget</h3>
@@ -583,13 +583,12 @@
         </footer>
     </div>
     <!-- ================================================================= -->
-    <!-- JAVASCRIPT STATE ENGINE & FIREBASE INTEGRATION GATEWAY CONFIGS     -->
+    <!-- JAVASCRIPT STATE ENGINE & FIREBASE STABLE PRODUCTION MODULES      -->
     <!-- ================================================================= -->
     <script type="module">
-       // Purani gstatic links ki jagah yeh secure cdnjs links copy-paste karein:
-import { initializeApp } from "https://cloudflare.com";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://cloudflare.com";
-import { getFirestore, collection, doc, setDoc, getDoc, addDoc, updateDoc, deleteDoc, query, where, onSnapshot } from "https://cloudflare.com";
+        import { initializeApp } from "https://gstatic.com";
+        import { getAuth, signOut, onAuthStateChanged } from "https://gstatic.com";
+        import { getFirestore, collection, doc, setDoc, getDoc, addDoc, updateDoc, deleteDoc, query, where, onSnapshot } from "https://gstatic.com";
 
         // IMPORTANT TODO: Paste your exact credentials from Firebase Console here
         const firebaseConfig = {
@@ -601,18 +600,18 @@ import { getFirestore, collection, doc, setDoc, getDoc, addDoc, updateDoc, delet
             appId: "YOUR_APP_ID"
         };
 
-        // Activation Cloud Handlers Hooks
+        // Initialize Firebase Production Engine Hooks
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Core Global Functional References Mappings
+        // Core Global References from your native JS engine state tracker
         let currentAdminToken = null;
-        let expenses = []; // State dynamic array binding sync
+        let expenses = []; // State dynamic data container array sync
         let BUDGET = 500000;
         let editTargetDocId = -1; 
 
-        // Native DOM Structural Elements Links
+        // Native DOM Node Pointers Mappings
         const appWorkspace = document.getElementById('appWorkspace');
         const lblActiveAdminEmail = document.getElementById('lblActiveAdminEmail');
         const btnSignOutSession = document.getElementById('btnSignOutSession');
@@ -633,22 +632,22 @@ import { getFirestore, collection, doc, setDoc, getDoc, addDoc, updateDoc, delet
         const searchFilter = document.getElementById('search-filter');
         const categoryFilter = document.getElementById('category-filter');
 
-        // Logout Gateway action trigger listener
+        // Logout Session Trigger Gateway action
         btnSignOutSession.addEventListener('click', () => signOut(auth));
 
-        // ACTIVE SECURITY CHECKS RECOGNITION LOOP ENGINE
+        // ACTIVE SECURITY CHECK MONITOR LOOP ENVIRONMENT
         onAuthStateChanged(auth, async (user) => {
             if(user) {
                 currentAdminToken = user.uid;
-                lblActiveAdminEmail.innerText = user.email;
-                appWorkspace.style.display = 'block'; // Open ledger view layout panel
+                lblActiveAdminEmail.innerText = user.email.toUpperCase();
+                appWorkspace.style.display = 'block'; // Open secure ledger view layout panel
                 
-                initPeriodDefaultsSetting(); // Initial native clock triggers
-                await syncSystemBudgetConfiguration(); // Pull secure dynamic user parameters budget
-                initiateRealtimeDataStream(); // Deploy partition filter engine pipeline
+                initPeriodDefaultsSetting(); // Initial native clock parameters triggers
+                await syncSystemBudgetConfiguration(); // Pull user budget dynamic partition online
+                initiateRealtimeDataStream(); // Deploy isolated pipeline filters
             } else {
                 currentAdminToken = null;
-                window.location.href = "login.html"; // Kick unauthorized browsers back to account card lock gate
+                window.location.href = "login.html"; // Kick unauthorized browsers back to lock gate
             }
         });
 
@@ -659,7 +658,7 @@ import { getFirestore, collection, doc, setDoc, getDoc, addDoc, updateDoc, delet
             sheetDay.value = new Date().getDate().toString();
             sheetMonth.value = months[currentMonthIndex];
             sheetYear.value = new Date().getFullYear().toString();
-            document.getElementById('exp-date').value = new Date().toISOString().split('T');
+            document.getElementById('exp-date').value = new Date().toISOString().split('T')[0];
         }
 
         // Dedicated Live Isolated User Budget Cloud Synchronizer
@@ -742,7 +741,7 @@ import { getFirestore, collection, doc, setDoc, getDoc, addDoc, updateDoc, delet
                     btnSubmit.style.backgroundColor = "#002060";
                 }
                 form.reset();
-                document.getElementById('exp-date').value = new Date().toISOString().split('T');
+                document.getElementById('exp-date').value = new Date().toISOString().split('T')[0];
             } catch(err) {
                 alert("Database Engine Transaction Failure: " + err.message);
             }
@@ -847,14 +846,14 @@ import { getFirestore, collection, doc, setDoc, getDoc, addDoc, updateDoc, delet
             });
         }
         // ================================================================= -->
-        // GLOBAL REPORT DATA WIPE OUT & EXPORTS ENGINES (PART 7)           -->
+        // DYNAMIC CLOUD REPOSITORY DATA CLEANUP & LIVE SPREADSHEET EXPORTS  -->
         // ================================================================= -->
         window.clearAllData = async function() {
             const activeDay = sheetDay.value;
             const activeMonth = sheetMonth.value;
             const activeYear = sheetYear.value;
 
-            // Target entries for the currently selected day period partition parameters
+            // Strict filtration parameters checking data blocks
             const targets = expenses.filter(item => 
                 item.selectedDay === activeDay && 
                 item.selectedMonth === activeMonth && 
@@ -879,7 +878,7 @@ import { getFirestore, collection, doc, setDoc, getDoc, addDoc, updateDoc, delet
         };
         document.getElementById('btnFlushData').onclick = window.clearAllData;
 
-        // Custom Optimized Spreadsheet Exporter Engine
+        // Custom Corporate Optimized Spreadsheet CSV Exporter Engine Block
         window.exportToExcel = function() {
             const activeDay = sheetDay.value;
             const activeMonth = sheetMonth.value;
@@ -896,7 +895,7 @@ import { getFirestore, collection, doc, setDoc, getDoc, addDoc, updateDoc, delet
                 return;
             }
 
-            let csvContent = "\uFEFF"; // UTF-8 BOM indicator layout patch for Urdu/Excel alignment symbols compatibility
+            let csvContent = "\uFEFF"; // Secure UTF-8 BOM injection for Microsoft Excel alignment layout compatibility
             csvContent += `ISLAMABAD DIAGNOSTIC CENTER (PVT) LTD.,,,,\n`;
             csvContent += `Monthly Expense Sheet - IDC G-8 Branch,,,,\n`;
             csvContent += `Report Period: Day ${activeDay} - ${activeMonth} ${activeYear},,,,\n\n`;
@@ -925,7 +924,7 @@ import { getFirestore, collection, doc, setDoc, getDoc, addDoc, updateDoc, delet
         document.getElementById('btnExportToExcel').onclick = window.exportToExcel;
         document.getElementById('btnPrintReport').onclick = () => window.print();
 
-        // Active layout event trackers listeners configuration parameters hooks
+        // Dynamic execution hooks listening tracking system selector bars alterations updates
         sheetDay.addEventListener('change', window.applyFilters);
         sheetMonth.addEventListener('change', window.applyFilters);
         sheetYear.addEventListener('change', window.applyFilters);
