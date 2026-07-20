@@ -199,18 +199,19 @@
     <!-- REAL-TIME CLOUD AUTHENTICATION MODULE MODULES -->
     <script type="module">
         import { initializeApp } from "https://gstatic.com";
-        import { getAuth, signOut } from "https://gstatic.com";
-        import { getFirestore, collection, doc, setDoc, getDoc, deleteDoc, getDocs } from "https://gstatic.com";
+import { getAuth, signOut, onAuthStateChanged } from "https://gstatic.com";
+import { getFirestore, collection, doc, setDoc, getDoc, addDoc, updateDoc, deleteDoc, query, where, onSnapshot } from "https://gstatic.com";
 
         // IMPORTANT TODO: Paste your exact credentials from Firebase Console here
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT_://firebaseapp.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT_://appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
+        
+    const firebaseConfig = {
+    apiKey: "AIzaSyD75zR_Moazzam1451_SecureKeyIdcG8",
+    authDomain: "://firebaseapp.com",
+    projectId: "idc-g8-branch-expense",
+    storageBucket: "://appspot.com",
+    messagingSenderId: "482910573921",
+    appId: "1:482910573921:web:b8c7d6e5f4a3b2c1"
+};
 
         // Live Cloud Activation Triggers
         const app = initializeApp(firebaseConfig);
