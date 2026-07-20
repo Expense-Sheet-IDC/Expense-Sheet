@@ -6,6 +6,8 @@
     <title>IDC G-8 Branch - Monthly Expense Portal</title>
     <!-- SILENCES THE BROWSER FAVICON ERROR COMPLETELY -->
     <link rel="icon" href="data:,">
+    
+    <!-- DESKTOP AND PORTAL ENGINE CSS STYLES -->
     <style>
         * {
             margin: 0;
@@ -20,6 +22,32 @@
             padding: 20px;
         }
 
+        /* ACCOUNT UTILITIES BAR */
+        .admin-meta-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f1f5f9;
+            padding: 10px 20px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            border: 1px solid #e2e8f0;
+            font-size: 14px;
+            color: #334155;
+        }
+
+        .btn-logout-gate {
+            background-color: #dc2626;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        /* APPLICATION CONTENT BOX */
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -44,7 +72,6 @@
             flex-wrap: wrap;
         }
 
-        /* Pure CSS Corporate Badge replacing broken images completely */
         .idc-badge-emblem {
             width: 50px;
             height: 50px;
@@ -74,29 +101,46 @@
             font-size: 14px;
             margin-top: 8px;
         }
-        /* MONTH & YEAR SELECTOR DISPLAY BAR */
-        .month-selector-bar {
-            text-align: center;
+        /* FIXED ALIGNMENT DYNAMIC SELECTION BAR */
+        .custom-selector-bar {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+            padding: 15px 0;
             margin-bottom: 25px;
+            width: 100%;
+            background-color: transparent;
             border-bottom: 2px solid #002060;
-            padding-bottom: 20px;
         }
 
-        .month-selector-bar label {
+        .custom-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .custom-group label {
             font-weight: bold;
+            margin: 0 !important;
+            padding: 0 !important;
+            white-space: nowrap;
+            font-size: 14px;
             color: #002060;
-            font-size: 15px;
-            margin-right: 8px;
         }
 
-        .month-selector-bar select {
-            padding: 6px 12px;
-            border: 1px solid #cbd5e1;
+        .custom-group select {
+            padding: 4px 8px;
+            border: 1px solid #ccc;
             border-radius: 4px;
+            font-family: inherit;
             font-size: 14px;
-            color: #333;
             background-color: #fff;
-            font-weight: 600;
+            height: 32px;
+            min-width: 80px;
+            box-sizing: border-box;
             cursor: pointer;
         }
 
@@ -113,7 +157,6 @@
             border-radius: 6px;
             text-align: center;
             border: 1px solid #ddd;
-            transition: background-color 0.3s, color 0.3s;
         }
 
         .card h3 {
@@ -135,13 +178,6 @@
             background-color: #fde8e8 !important;
             color: #dc2626 !important;
             border: 1.5px solid #dc2626 !important;
-            animation: pulse-danger 2s infinite;
-        }
-
-        @keyframes pulse-danger {
-            0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
         }
 
         .btn-edit-budget {
@@ -172,7 +208,7 @@
             font-weight: bold;
             font-size: 14px;
             color: white;
-            background-color: #0d9488;
+            background-color: #0284c7;
             transition: opacity 0.2s;
         }
 
@@ -237,6 +273,7 @@
             cursor: pointer;
             font-weight: bold;
         }
+
         /* Table Styling */
         table {
             width: 100%;
@@ -267,6 +304,7 @@
             background-color: #f1f5f9;
             border-top: 2px solid #002060;
             font-size: 15px;
+            font-weight: bold;
         }
 
         .action-container {
@@ -313,7 +351,7 @@
             color: #444;
         }
 
-        /* SYSTEM FOOTER INTEGRATED IN CSS CLASS ENGINE */
+        /* SYSTEM FOOTER WITH AUTHORIZATION CREDITS */
         .portal-footer {
             text-align: center; 
             margin-top: 50px; 
@@ -329,158 +367,98 @@
             font-weight: 700;
         }
 
+        /* Mobile Screens Responsive Grid Settings */
+        @media (max-width: 600px) {
+            .custom-selector-bar {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 15px !important;
+                padding: 15px !important;
+                box-sizing: border-box;
+            }
+
+            .custom-group {
+                justify-content: space-between !important;
+                width: 100% !important;
+                background: #f9f9f9;
+                padding: 8px 12px;
+                border-radius: 6px;
+                border: 1px solid #eee;
+                box-sizing: border-box;
+            }
+
+            .custom-group select {
+                width: 60% !important;
+                height: 38px !important;
+            }
+            
+            #expense-form { grid-template-columns: 1fr; }
+            .summary-section { grid-template-columns: 1fr; }
+        }
+
         /* PRINT MANAGEMENT FOR EXCEL/PDF LOOK */
         @media print {
             body { background-color: white; padding: 0; }
             .container { box-shadow: none; padding: 0; width: 100%; }
-            .form-section, .toolbar, .filter-section, .action-container, .portal-footer, th:last-child, td:last-child, .btn-edit-budget {
+            .form-section, .toolbar, .filter-section, .action-container, .portal-footer, th:last-child, td:last-child, .btn-edit-budget, .admin-meta-header {
                 display: none !important;
             }
-            .month-selector-bar select {
+            .custom-selector-bar select {
                 border: none !important;
                 background: transparent !important;
                 appearance: none !important;
-                -webkit-appearance: none !important;
                 font-size: 16px !important;
                 color: #002060 !important;
             }
-            th, td { padding: 10px; border: 1px solid #333; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            th, td { padding: 10px; border: 1px solid #333; print-color-adjust: exact; }
             .card { border: 1px solid #333 !important; }
             .signature-section { margin-top: 100px; page-break-inside: avoid; }
         }
     </style>
-<!-- Is CSS code se teeno dropdowns aur labels ki line bilkul ek jaisi seedhi ho jaye gi -->
- <!-- CSS Styles for Desktop and Mobile Grid Layout -->
-        <style>
-            .custom-selector-bar {
-                display: flex;
-                flex-direction: row;
-                flex-wrap: wrap;
-                justify-content: center;
-                align-items: center;
-                gap: 25px;
-                padding: 15px 0;
-                margin-bottom: 25px;
-                width: 100%;
-                background-color: transparent;
-            }
-
-            .custom-group {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-            }
-
-            .custom-group label {
-                font-weight: bold;
-                margin: 0 !important;
-                padding: 0 !important;
-                white-space: nowrap;
-                font-size: 14px;
-                color: #333;
-            }
-
-            .custom-group select {
-                padding: 6px 12px;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-                font-family: inherit;
-                font-size: 14px;
-                background-color: #fff;
-                height: 34px;
-                min-width: 80px;
-                box-sizing: border-box;
-            }
-
-            /* Mobile Screens (Aap ki responsive setting) */
-            @media (max-width: 600px) {
-                .custom-selector-bar {
-                    flex-direction: column !important;
-                    align-items: stretch !important;
-                    gap: 15px !important;
-                    padding: 15px !important;
-                    box-sizing: border-box;
-                }
-
-                .custom-group {
-                    justify-content: space-between !important;
-                    width: 100% !important;
-                    background: #f9f9f9;
-                    padding: 8px 12px;
-                    border-radius: 6px;
-                    border: 1px solid #eee;
-                    box-sizing: border-box;
-                }
-
-                .custom-group select {
-                    width: 60% !important;
-                    height: 38px !important; /* Mobile par click karne mein aasani ke liye thoda bara */
-                }
-            }
-        </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Main Header Area with Integrated Graphic Emblem Fix -->
+    <!-- MAIN WORKSPACE PORTAL CONTAINER -->
+    <div id="appWorkspace" class="container" style="display: none;">
+        
+        <!-- SESSION HEADER USER UTILITIES -->
+        <div class="admin-meta-header">
+            <div><strong>Active Administrator: </strong><span id="lblActiveAdminEmail">Checking Session...</span></div>
+            <button id="btnSignOutSession" class="btn-logout-gate">Logout Account</button>
+        </div>
+
+        <!-- CORPORATE EMBLEM & HEADER -->
         <header class="main-header">
             <div class="header-title-container">
                 <div class="idc-badge-emblem">IDC</div>
                 <h1>ISLAMABAD DIAGNOSTIC CENTER (PVT) LTD.</h1>
             </div>
             <p>Monthly Expense Sheet IDC G-8 Branch Islamabad</p>
-              </header>
+        </header>
 
-        <!-- Fixed Alignment Dynamic Selection Bar -->
-        <div class="month-selector-bar" style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 20px; padding: 15px 0; margin-bottom: 20px; width: 100%;">
-            
-            <!-- Day Selector Group -->
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <label for="sheet-day" style="font-weight: bold; margin: 0; white-space: nowrap;">Date:</label>
-                <select id="sheet-day" onchange="saveReportPeriod()" style="padding: 4px 8px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; font-size: 14px; background-color: #fff; height: 32px;">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10</option>
-                    <option value="11">11</option>
-                    <option value="12">12</option>
-                    <option value="13">13</option>
-                    <option value="14">14</option>
-                    <option value="15">15</option>
-                    <option value="16">16</option>
-                    <option value="17">17</option>
-                    <option value="18">18</option>
-                    <option value="19">19</option>
-                    <option value="20">20</option>
-                    <option value="21">21</option>
-                    <option value="22">22</option>
-                    <option value="23">23</option>
-                    <option value="24">24</option>
-                    <option value="25">25</option>
-                    <option value="26">26</option>
-                    <option value="27">27</option>
-                    <option value="28">28</option>
-                    <option value="29">29</option>
-                    <option value="30">30</option>
-                    <option value="31">31</option>
+        <!-- ALIGNED RESPONSIVE FLEXBOX SELECTION BAR -->
+        <div class="custom-selector-bar">
+            <!-- Day Selection Group -->
+            <div class="custom-group">
+                <label for="sheet-day">Date:</label>
+                <select id="sheet-day">
+                    <script>
+                        for(let i=1; i<=31; i++) {
+                            document.write(`<option value="${i}">${i}</option>`);
+                        }
+                    </script>
                 </select>
             </div>
 
-            <!-- Month Selector Group -->
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <label for="sheet-month" style="font-weight: bold; margin: 0; white-space: nowrap;">Report Month:</label>
-                <select id="sheet-month" onchange="saveReportPeriod()" style="padding: 4px 8px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; font-size: 14px; background-color: #fff; height: 32px;">
+            <!-- Month Selection Group -->
+            <div class="custom-group">
+                <label for="sheet-month">Report Month:</label>
+                <select id="sheet-month">
                     <option value="January">January</option>
                     <option value="February">February</option>
                     <option value="March">March</option>
                     <option value="April">April</option>
                     <option value="May">May</option>
-                    <option value="June">June</option>
+                    <option value="June" selected>June</option>
                     <option value="July">July</option>
                     <option value="August">August</option>
                     <option value="September">September</option>
@@ -490,41 +468,27 @@
                 </select>
             </div>
 
-            <!-- Year Selector Group -->
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <label for="sheet-year" style="font-weight: bold; margin: 0; white-space: nowrap;">Year:</label>
-                <select id="sheet-year" onchange="saveReportPeriod()" style="padding: 4px 8px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; font-size: 14px; background-color: #fff; height: 32px;">
-                    <option value="2021">2021</option>
-                    <option value="2022">2022</option>
-                    <option value="2023">2023</option>
+            <!-- Year Selection Group -->
+            <div class="custom-group">
+                <label for="sheet-year">Year:</label>
+                <select id="sheet-year">
                     <option value="2024">2024</option>
                     <option value="2025">2025</option>
-                    <option value="2026">2026</option>
+                    <option value="2026" selected>2026</option>
                     <option value="2027">2027</option>
                     <option value="2028">2028</option>
                     <option value="2029">2029</option>
                     <option value="2030">2030</option>
-                    <option value="2031">2031</option>
-                    <option value="2032">2032</option>
-                    <option value="2033">2033</option>
-                    <option value="2034">2034</option>
-                    <option value="2035">2035</option>
                 </select>
             </div>
         </div>
-        <!-- Dynamic Action Toolbar -->
-        <div class="toolbar">
-            <button class="btn-toolbar btn-excel" onclick="exportToExcel()">📊 Export to Excel</button>
-            <button class="btn-toolbar btn-clear-data" onclick="clearAllData()">🗑️ Clear Sheet Data</button>
-            <button class="btn-toolbar" onclick="window.print()">🖨️ Save Report (PDF) / Print</button>
-        </div>
 
-        <!-- Live Summary Block -->
+        <!-- METRIC METERS DATA SUMMARY GRIDS -->
         <section class="summary-section">
             <div class="card budget-card">
                 <h3>Total Budget</h3>
                 <p id="total-budget">PKR 500,000</p>
-                <button class="btn-edit-budget" onclick="changeBudget()">Edit Budget</button>
+                <button class="btn-edit-budget" id="btnEditBudgetTrigger">Edit Budget</button>
             </div>
             <div class="card expense-card">
                 <h3>Total Expense</h3>
@@ -532,14 +496,20 @@
             </div>
             <div class="card remaining-card" id="remaining-card-block">
                 <h3>Remaining</h3>
-                <p id="remaining-budget">PKR 50,000</p>
+                <p id="remaining-budget">PKR 500,000</p>
             </div>
         </section>
+        <!-- DYNAMIC ACTION TOOLBAR -->
+        <div class="toolbar">
+            <button class="btn-toolbar btn-excel" id="btnExportToExcel">📊 Export to Excel</button>
+            <button class="btn-toolbar btn-clear-data" id="btnFlushData">🗑️ Clear Sheet Data</button>
+            <button class="btn-toolbar" id="btnPrintReport">🖨️ Save Report (PDF) / Print</button>
+        </div>
 
-        <!-- Expense Form -->
+        <!-- NEW EXPENSE ROW FORM ENGINE -->
         <section class="form-section">
             <h2 id="form-title">Add New Expense Row</h2>
-            <form id="expense-form">
+            <form id="expense-form" onsubmit="return false;">
                 <input type="date" id="exp-date" required>
                 <select id="exp-category" required>
                     <option value="" disabled selected>Select Category</option>
@@ -552,17 +522,17 @@
                 </select>
                 <input type="text" id="exp-desc" placeholder="Description / Item Details" required>
                 <input type="number" id="exp-amount" placeholder="Amount (PKR)" required>
-                <button type="submit" id="btn-submit" class="btn-add">Add Entry</button>
+                <button type="button" id="btn-submit" class="btn-add">Add Entry</button>
             </form>
         </section>
 
-        <!-- Live Filtering Control Block -->
+        <!-- LIVE FILTERING SEARCH AND FILTER CONTROLS -->
         <section class="filter-section">
             <div>
-                <input type="text" id="search-filter" placeholder="🔍 Search description or details..." oninput="applyFilters()">
+                <input type="text" id="search-filter" placeholder="🔍 Search description or details...">
             </div>
             <div>
-                <select id="category-filter" onchange="applyFilters()">
+                <select id="category-filter">
                     <option value="ALL">All Categories (No Filter)</option>
                     <option value="Lab Chemicals">Lab Chemicals</option>
                     <option value="Medical Supplies">Medical Supplies</option>
@@ -574,7 +544,7 @@
             </div>
         </section>
 
-        <!-- Unified Expense Table with Sr. No. Header -->
+        <!-- UNIFIED ACCOUNTING EXPENSE TABLE -->
         <section class="table-section">
             <table id="expense-table">
                 <thead>
@@ -587,34 +557,64 @@
                         <th style="width: 15%;">Actions</th>
                     </tr>
                 </thead>
-                <tbody id="table-body"></tbody>
+                <tbody id="table-body">
+                    <!-- JavaScript Dynamic Injections will stream here -->
+                </tbody>
                 <tfoot>
                     <tr class="grand-total-row">
                         <td colspan="4" style="text-align: right; font-weight: bold;">Grand Total:</td>
-                        <td id="grand-total-val" style="font-weight: bold; text-align: right;">0</td>
+                        <td id="grand-total-val" style="font-weight: bold; text-align: center;">0</td>
                         <td></td>
                     </tr>
                 </tfoot>
             </table>
         </section>
 
-        <!-- Official Sign Boards Block Layout -->
+        <!-- OFFICIAL CORPORATE SIGN SIGNATURE BOXES -->
         <section class="signature-section">
-            <div class="sig-box">Prepared By </div>
-            <div class="sig-box">Checked By </div>
-            <div class="sig-box">Approved By </div>
+            <div class="sig-box">Prepared By</div>
+            <div class="sig-box">Checked By</div>
+            <div class="sig-box">Approved By</div>
         </section>
 
-        <!-- SYSTEM FOOTER WITH M. MOAZZAM CREDIT AUTHORIZATION -->
+        <!-- M. MOAZZAM CREDIT DESIGN RIGHTS FOOTER -->
         <footer class="portal-footer">
             Designed by <span class="portal-footer-author">M. Moazzam</span> | © 2026 All Rights Reserved
         </footer>
     </div>
-    <!-- JAVASCRIPT STATE ENGINE -->
-    <script>
-        let BUDGET = parseFloat(localStorage.getItem('idc_budget')) || 500000;
-        let expenses = JSON.parse(localStorage.getItem('idc_expenses')) || [];
-        let editIndex = -1;
+    <!-- ================================================================= -->
+    <!-- JAVASCRIPT STATE ENGINE & FIREBASE INTEGRATION GATEWAY CONFIGS     -->
+    <!-- ================================================================= -->
+    <script type="module">
+        import { initializeApp } from "https://gstatic.com";
+        import { getAuth, signOut, onAuthStateChanged } from "https://gstatic.com";
+        import { getFirestore, collection, doc, setDoc, getDoc, addDoc, updateDoc, deleteDoc, query, where, onSnapshot } from "https://gstatic.com";
+
+        // IMPORTANT TODO: Paste your exact credentials from Firebase Console here
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_://firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_://appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Activation Cloud Handlers Hooks
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Core Global Functional References Mappings
+        let currentAdminToken = null;
+        let expenses = []; // State dynamic array binding sync
+        let BUDGET = 500000;
+        let editTargetDocId = -1; 
+
+        // Native DOM Structural Elements Links
+        const appWorkspace = document.getElementById('appWorkspace');
+        const lblActiveAdminEmail = document.getElementById('lblActiveAdminEmail');
+        const btnSignOutSession = document.getElementById('btnSignOutSession');
 
         const form = document.getElementById('expense-form');
         const formTitle = document.getElementById('form-title');
@@ -626,180 +626,288 @@
         const grandTotalValEl = document.getElementById('grand-total-val');
         const remainingCardBlock = document.getElementById('remaining-card-block');
 
-        function initPeriod() {
+        const sheetDay = document.getElementById('sheet-day');
+        const sheetMonth = document.getElementById('sheet-month');
+        const sheetYear = document.getElementById('sheet-year');
+        const searchFilter = document.getElementById('search-filter');
+        const categoryFilter = document.getElementById('category-filter');
+
+        // Logout Gateway action trigger listener
+        btnSignOutSession.addEventListener('click', () => signOut(auth));
+
+        // ACTIVE SECURITY CHECKS RECOGNITION LOOP ENGINE
+        onAuthStateChanged(auth, async (user) => {
+            if(user) {
+                currentAdminToken = user.uid;
+                lblActiveAdminEmail.innerText = user.email;
+                appWorkspace.style.display = 'block'; // Open ledger view layout panel
+                
+                initPeriodDefaultsSetting(); // Initial native clock triggers
+                await syncSystemBudgetConfiguration(); // Pull secure dynamic user parameters budget
+                initiateRealtimeDataStream(); // Deploy partition filter engine pipeline
+            } else {
+                currentAdminToken = null;
+                window.location.href = "login.html"; // Kick unauthorized browsers back to account card lock gate
+            }
+        });
+
+        function initPeriodDefaultsSetting() {
             const currentMonthIndex = new Date().getMonth();
             const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             
-            const savedMonth = localStorage.getItem('idc_report_month') || months[currentMonthIndex];
-            const savedYear = localStorage.getItem('idc_report_year') || new Date().getFullYear().toString();
-
-            document.getElementById('sheet-month').value = savedMonth;
-            document.getElementById('sheet-year').value = savedYear;
+            sheetDay.value = new Date().getDate().toString();
+            sheetMonth.value = months[currentMonthIndex];
+            sheetYear.value = new Date().getFullYear().toString();
+            document.getElementById('exp-date').value = new Date().toISOString().split('T');
         }
 
-        function saveReportPeriod() {
-            const selectedMonth = document.getElementById('sheet-month').value;
-            const selectedYear = document.getElementById('sheet-year').value;
-            localStorage.setItem('idc_report_month', selectedMonth);
-            localStorage.setItem('idc_report_year', selectedYear);
+        // Dedicated Live Isolated User Budget Cloud Synchronizer
+        async function syncSystemBudgetConfiguration() {
+            const budgetReference = doc(db, "budgets", currentAdminToken);
+            const dataSnapshot = await getDoc(budgetReference);
+            if(dataSnapshot.exists()) {
+                BUDGET = Number(dataSnapshot.data().value || 500000);
+            } else {
+                BUDGET = 500000;
+                await setDoc(budgetReference, { value: 500000 });
+            }
+            totalBudgetEl.innerText = `PKR ${BUDGET.toLocaleString()}`;
         }
 
-        function changeBudget() {
+        window.changeBudget = async function() {
             let newBudget = prompt("Enter new Total Budget (PKR):", BUDGET);
             if (newBudget !== null && !isNaN(newBudget) && newBudget.trim() !== "") {
                 BUDGET = parseFloat(newBudget);
-                localStorage.setItem('idc_budget', BUDGET);
-                updateSummary();
+                await setDoc(doc(db, "budgets", currentAdminToken), { value: BUDGET });
+                totalBudgetEl.innerText = `PKR ${BUDGET.toLocaleString()}`;
+                applyFilters();
             }
+        };
+        document.getElementById('btnEditBudgetTrigger').onclick = window.changeBudget;
+        // ================================================================= -->
+        // DYNAMIC CLOUD REPOSITORY DATA FETCH STREAM ENGINE (PART 6)         -->
+        // ================================================================= -->
+        function initiateRealtimeDataStream() {
+            // Secure security isolation check parameters pipeline 
+            const collectionQuery = query(
+                collection(db, "expenses"), 
+                where("ownerUid", "==", currentAdminToken)
+            );
+
+            onSnapshot(collectionQuery, (querySnapshot) => {
+                expenses = [];
+                querySnapshot.forEach((documentRecord) => {
+                    expenses.push({
+                        docId: documentRecord.id,
+                        ...documentRecord.data()
+                    });
+                });
+                applyFilters();
+            });
         }
 
-        function updateSummary() {
-            let total = expenses.reduce((sum, item) => sum + item.amount, 0);
-            let remaining = BUDGET - total;
+        // Processing Runtime Event Write Actions (Create or Update Documents)
+        btnSubmit.addEventListener('click', async () => {
+            const date = document.getElementById('exp-date').value;
+            const category = document.getElementById('exp-category').value;
+            const desc = document.getElementById('exp-desc').value;
+            const amount = parseFloat(document.getElementById('exp-amount').value);
 
-            totalBudgetEl.innerText = `PKR ${BUDGET.toLocaleString()}`;
-            totalExpenseEl.innerText = `PKR ${total.toLocaleString()}`;
+            if(!date || !category || !desc.trim() || isNaN(amount)) {
+                return alert("Tamam fields complete filled hona lazmi hain.");
+            }
+
+            const itemPayload = {
+                date,
+                category,
+                desc: desc.trim(),
+                amount,
+                ownerUid: currentAdminToken,
+                selectedDay: sheetDay.value,
+                selectedMonth: sheetMonth.value,
+                selectedYear: sheetYear.value
+            };
+
+            try {
+                if (editTargetDocId === -1) {
+                    // Push clean fresh layout partition document row record
+                    await addDoc(collection(db, "expenses"), itemPayload);
+                } else {
+                    // Overwrite parameters matching database targeted dynamic token row docId 
+                    await updateDoc(doc(db, "expenses", editTargetDocId), itemPayload);
+                    editTargetDocId = -1;
+                    formTitle.innerText = "Add New Expense Row";
+                    btnSubmit.innerText = "Add Entry";
+                    btnSubmit.style.backgroundColor = "#002060";
+                }
+                form.reset();
+                document.getElementById('exp-date').value = new Date().toISOString().split('T');
+            } catch(err) {
+                alert("Database Engine Transaction Failure: " + err.message);
+            }
+        });
+
+        // Compute Engine Aggregation System Metrics Live Filters Calculation 
+        window.applyFilters = function() {
+            const activeDay = sheetDay.value;
+            const activeMonth = sheetMonth.value;
+            const activeYear = sheetYear.value;
+            const searchValue = searchFilter.value.toLowerCase().trim();
+            const categoryValue = categoryFilter.value;
+
+            tableBody.innerHTML = '';
+            let filteredTotal = 0;
+            let totalRunningSum = 0;
+            let displayIndex = 1;
+
+            // 1. Calculate weighted calculations weights for global current period configuration counters
+            expenses.forEach(item => {
+                if(item.selectedDay === activeDay && item.selectedMonth === activeMonth && item.selectedYear === activeYear) {
+                    totalRunningSum += item.amount;
+                }
+            });
+
+            // 2. Filtration flow sorting logic pipe chronologically array sets 
+            const filteredSet = expenses
+                .filter(item => item.selectedDay === activeDay && item.selectedMonth === activeMonth && item.selectedYear === activeYear)
+                .filter(item => categoryValue === 'ALL' || item.category === categoryValue)
+                .filter(item => item.desc.toLowerCase().includes(searchValue) || item.category.toLowerCase().includes(searchValue))
+                .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            filteredSet.forEach((item) => {
+                filteredTotal += item.amount;
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="text-center" style="font-weight: 600;">${displayIndex}</td>
+                    <td class="text-center">${item.date}</td>
+                    <td>${item.category}</td>
+                    <td>${item.desc}</td>
+                    <td class="text-right">${item.amount.toLocaleString()}</td>
+                    <td class="text-center">
+                        <div class="action-container">
+                            <button class="btn-action-edit" data-id="${item.docId}">Edit</button>
+                            <button class="btn-delete" data-id="${item.docId}">Delete</button>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+                displayIndex++;
+            });
+
+            // Refresh presentation layers real-time
+            let remaining = BUDGET - totalRunningSum;
+            totalExpenseEl.innerText = `PKR ${totalRunningSum.toLocaleString()}`;
             remainingBudgetEl.innerText = `PKR ${remaining.toLocaleString()}`;
+            grandTotalValEl.innerText = filteredTotal.toLocaleString();
             
             if (remaining < 0) {
                 remainingCardBlock.classList.add('budget-danger');
             } else {
                 remainingCardBlock.classList.remove('budget-danger');
             }
-        }
 
-        function applyFilters() {
-            const searchValue = document.getElementById('search-filter').value.toLowerCase().trim();
-            const categoryValue = document.getElementById('category-filter').value;
-            
-            tableBody.innerHTML = '';
-            let filteredTotal = 0;
-            let displayIndex = 1;
+            attachDynamicRowListeners();
+        };
 
-            expenses.forEach((item, originalIndex) => {
-                const matchesSearch = item.desc.toLowerCase().includes(searchValue) || item.category.toLowerCase().includes(searchValue);
-                const matchesCategory = (categoryValue === 'ALL') || (item.category === categoryValue);
-
-                if (matchesSearch && matchesCategory) {
-                    filteredTotal += item.amount;
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td class="text-center" style="font-weight: 600;">${displayIndex}</td>
-                        <td class="text-center">${item.date}</td>
-                        <td>${item.category}</td>
-                        <td>${item.desc}</td>
-                        <td class="text-right">${item.amount.toLocaleString()}</td>
-                        <td class="text-center">
-                            <div class="action-container">
-                                <button class="btn-action-edit" onclick="startEdit(${originalIndex})">Edit</button>
-                                <button class="btn-delete" onclick="deleteExpense(${originalIndex})">Delete</button>
-                            </div>
-                        </td>
-                    `;
-                    tableBody.appendChild(row);
-                    displayIndex++;
-                }
+        function attachDynamicRowListeners() {
+            document.querySelectorAll('.btn-delete').forEach(btn => {
+                btn.onclick = async (e) => {
+                    const docId = e.target.dataset.id;
+                    if (confirm("Are you sure you want to delete this expense row?")) {
+                        if (editTargetDocId === docId) {
+                            editTargetDocId = -1;
+                            formTitle.innerText = "Add New Expense Row";
+                            btnSubmit.innerText = "Add Entry";
+                            btnSubmit.style.backgroundColor = "#002060";
+                            form.reset();
+                        }
+                        await deleteDoc(doc(db, "expenses", docId));
+                    }
+                };
             });
 
-            grandTotalValEl.innerText = filteredTotal.toLocaleString();
+            document.querySelectorAll('.btn-action-edit').forEach(btn => {
+                btn.onclick = (e) => {
+                    const docId = e.target.dataset.id;
+                    const target = expenses.find(r => r.docId === docId);
+                    if (!target) return;
+
+                    editTargetDocId = docId;
+                    document.getElementById('exp-date').value = target.date;
+                    document.getElementById('exp-category').value = target.category;
+                    document.getElementById('exp-desc').value = target.desc;
+                    document.getElementById('exp-amount').value = target.amount;
+
+                    formTitle.innerText = "Edit Selected Expense Row";
+                    btnSubmit.innerText = "Update Row";
+                    btnSubmit.style.backgroundColor = "#d97706";
+                    window.scrollTo({ top: 150, behavior: 'smooth' });
+                };
+            });
         }
+        // ================================================================= -->
+        // GLOBAL REPORT DATA WIPE OUT & EXPORTS ENGINES (PART 7)           -->
+        // ================================================================= -->
+        window.clearAllData = async function() {
+            const activeDay = sheetDay.value;
+            const activeMonth = sheetMonth.value;
+            const activeYear = sheetYear.value;
 
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
+            // Target entries for the currently selected day period partition parameters
+            const targets = expenses.filter(item => 
+                item.selectedDay === activeDay && 
+                item.selectedMonth === activeMonth && 
+                item.selectedYear === activeYear
+            );
+            
+            if(targets.length === 0) return alert("Is specific selection period mein koi data majood nahi hai.");
 
-            const date = document.getElementById('exp-date').value;
-            const category = document.getElementById('exp-category').value;
-            const desc = document.getElementById('exp-desc').value;
-            const amount = parseFloat(document.getElementById('exp-amount').value);
-
-            const itemData = { date, category, desc, amount };
-
-            if (editIndex === -1) {
-                expenses.push(itemData);
-            } else {
-                expenses[editIndex] = itemData;
-                editIndex = -1;
-                formTitle.innerText = "Add New Expense Row";
-                btnSubmit.innerText = "Add Entry";
-                btnSubmit.style.backgroundColor = "#002060";
-            }
-
-            localStorage.setItem('idc_expenses', JSON.stringify(expenses));
-            updateSummary();
-            applyFilters();
-            form.reset();
-        });
-
-        function startEdit(index) {
-            editIndex = index;
-            const target = expenses[index];
-
-            document.getElementById('exp-date').value = target.date;
-            document.getElementById('exp-category').value = target.category;
-            document.getElementById('exp-desc').value = target.desc;
-            document.getElementById('exp-amount').value = target.amount;
-
-            formTitle.innerText = "Edit Selected Expense Row";
-            btnSubmit.innerText = "Update Row";
-            btnSubmit.style.backgroundColor = "#d97706";
-            window.scrollTo({ top: 150, behavior: 'smooth' });
-        }
-
-        function deleteExpense(index) {
-            if (confirm("Are you sure you want to delete this expense row?")) {
-                if (editIndex === index) {
-                    editIndex = -1;
-                    formTitle.innerText = "Add New Expense Row";
-                    btnSubmit.innerText = "Add Entry";
-                    btnSubmit.style.backgroundColor = "#002060";
-                    form.reset();
+            if (confirm("⚠️ WARNING: Kya aap waqai is selected date ka data cloud database se clear karna chahte hain? Yeh operation undo nahi ho sakta.")) {
+                for(let item of targets) {
+                    await deleteDoc(doc(db, "expenses", item.docId));
                 }
-                expenses.splice(index, 1);
-                localStorage.setItem('idc_expenses', JSON.stringify(expenses));
-                updateSummary();
-                applyFilters();
-            }
-        }
-
-        function clearAllData() {
-            if (confirm("⚠️ WARNING: Kya aap waqai is poori sheet ka data clear karna chahte hain? Yeh operation undo nahi ho sakta.")) {
-                expenses = [];
-                localStorage.removeItem('idc_expenses');
-                
-                editIndex = -1;
+                editTargetDocId = -1;
                 formTitle.innerText = "Add New Expense Row";
                 btnSubmit.innerText = "Add Entry";
                 btnSubmit.style.backgroundColor = "#002060";
                 form.reset();
-                document.getElementById('search-filter').value = '';
-                document.getElementById('category-filter').value = 'ALL';
-
-                updateSummary();
-                applyFilters();
+                searchFilter.value = '';
+                categoryFilter.value = 'ALL';
+                alert("Selected date ka cloud partition dynamically successfully clear ho chuka hai.");
             }
-        }
+        };
+        document.getElementById('btnFlushData').onclick = window.clearAllData;
 
-        function exportToExcel() {
-            if (expenses.length === 0) {
+        // Custom Optimized Spreadsheet Exporter Engine
+        window.exportToExcel = function() {
+            const activeDay = sheetDay.value;
+            const activeMonth = sheetMonth.value;
+            const activeYear = sheetYear.value;
+
+            const contextData = expenses.filter(item => 
+                item.selectedDay === activeDay && 
+                item.selectedMonth === activeMonth && 
+                item.selectedYear === activeYear
+            );
+
+            if (contextData.length === 0) {
                 alert("Sheet khali hai! Export karne ke liye data add karein.");
                 return;
             }
 
-            const activeMonth = document.getElementById('sheet-month').value;
-            const activeYear = document.getElementById('sheet-year').value;
-
-            let csvContent = "\uFEFF"; 
+            let csvContent = "\uFEFF"; // UTF-8 BOM indicator layout patch for Urdu/Excel alignment symbols compatibility
             csvContent += `ISLAMABAD DIAGNOSTIC CENTER (PVT) LTD.,,,,\n`;
             csvContent += `Monthly Expense Sheet - IDC G-8 Branch,,,,\n`;
-            csvContent += `Report Period: ${activeMonth} ${activeYear},,,,\n\n`;
+            csvContent += `Report Period: Day ${activeDay} - ${activeMonth} ${activeYear},,,,\n\n`;
             csvContent += "Sr. No.,Date,Expense Category,Description / Item Details,Amount (PKR)\n";
 
-            expenses.forEach((item, index) => {
+            let total = 0;
+            contextData.forEach((item, index) => {
+                total += item.amount;
                 let cleanDesc = item.desc.replace(/"/g, '""');
                 csvContent += `${index + 1},${item.date},"${item.category}","${cleanDesc}",${item.amount}\n`;
             });
 
-            let total = expenses.reduce((sum, item) => sum + item.amount, 0);
             csvContent += `,,,Grand Total:,${total}\n`;
 
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -807,16 +915,22 @@
             const url = URL.createObjectURL(blob);
             
             link.setAttribute("href", url);
-            link.setAttribute("download", `IDC_G8_Expenses_${activeMonth}_${activeYear}.csv`);
+            link.setAttribute("download", `IDC_G8_Expenses_${activeDay}_${activeMonth}_${activeYear}.csv`);
             link.style.visibility = 'hidden';
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-        }
+        };
+        document.getElementById('btnExportToExcel').onclick = window.exportToExcel;
+        document.getElementById('btnPrintReport').onclick = () => window.print();
 
-        initPeriod();
-        updateSummary();
-        applyFilters();
+        // Active layout event trackers listeners configuration parameters hooks
+        sheetDay.addEventListener('change', window.applyFilters);
+        sheetMonth.addEventListener('change', window.applyFilters);
+        sheetYear.addEventListener('change', window.applyFilters);
+        searchFilter.addEventListener('input', window.applyFilters);
+        categoryFilter.addEventListener('change', window.applyFilters);
+
     </script>
 </body>
 </html>
