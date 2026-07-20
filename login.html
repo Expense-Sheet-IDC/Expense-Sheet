@@ -63,7 +63,6 @@
             font-size: 14px;
             margin-bottom: 25px;
         }
-
         .auth-field {
             width: 100%;
             padding: 12px 15px;
@@ -198,20 +197,20 @@
     </div>
     <!-- REAL-TIME CLOUD AUTHENTICATION MODULE MODULES -->
     <script type="module">
-        import { initializeApp } from "https://unpkg.com";
-        import { getAuth, signOut, onAuthStateChanged } from "https://unpkg.com";
-        import { getFirestore, collection, doc, setDoc, getDoc, addDoc, updateDoc, deleteDoc, query, where, onSnapshot } from "https://unpkg.com";
+        // ✅ CORS & MIME ERROR FIX: Unpkg aur gstatic ke perfectly updated full standard links yahan hain
+        import { initializeApp } from "https://gstatic.com";
+        import { getAuth, signOut } from "https://gstatic.com";
+        import { getFirestore, collection, doc, setDoc, getDoc, deleteDoc, getDocs } from "https://gstatic.com";
 
-        // IMPORTANT TODO: Paste your exact credentials from Firebase Console here
-        
-    const firebaseConfig = {
-    apiKey: "AIzaSyD75zR_Moazzam1451_SecureKeyIdcG8",
-    authDomain: "://firebaseapp.com",
-    projectId: "idc-g8-branch-expense",
-    storageBucket: "://appspot.com",
-    messagingSenderId: "482910573921",
-    appId: "1:482910573921:web:b8c7d6e5f4a3b2c1"
-};
+        // ✅ SECURE LIVE DATABASE CONNECTIONS TOKENS
+        const firebaseConfig = {
+            apiKey: "AIzaSyD75zR_Moazzam1451_SecureKeyIdcG8",
+            authDomain: "://firebaseapp.com",
+            projectId: "idc-g8-branch-expense",
+            storageBucket: "://appspot.com",
+            messagingSenderId: "482910573921",
+            appId: "1:482910573921:web:b8c7d6e5f4a3b2c1"
+        };
 
         // Live Cloud Activation Triggers
         const app = initializeApp(firebaseConfig);
@@ -235,7 +234,6 @@
         const userTableBody = document.getElementById('userTableBody');
         const btnSuperLogout = document.getElementById('btnSuperLogout');
         const btnChangeSuperPass = document.getElementById('btnChangeSuperPass');
-
         // Master Security Cloud Registry Synchronization Logic
         async function forceSyncMasterCredentials() {
             try {
@@ -372,7 +370,6 @@
                 userTableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#dc2626;">Cloud Load Failure Exception.</td></tr>`;
             }
         }
-
         // TRIGGER CONTROL PRIVILEGES GATES SUBMISSION CHECK LOOP
         btnSubmitAuth.addEventListener('click', async () => {
             const inputUser = txtAuthUser.value.trim(); 
