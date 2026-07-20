@@ -195,10 +195,10 @@
             Designed by M. Moazzam | © 2026 All Rights Reserved
         </div>
     </div>
-    <!-- REAL-TIME CLOUD AUTHENTICATION MODULE MODULES -->
-        <!-- 👑 PERMANENT CORS FIX: NO INTERNET IMPORTS DIRECT SCRIPTS ENGINE -->
-    <script type="module">
-        // JavaScript Context Bindings Configurations
+       <!-- ================================================================= -->
+    <!-- UPDATED JAVASCRIPT AUTH ENGINE WITH EYE TOGGLE & AUTO CLEANUP      -->
+    <!-- ================================================================= -->
+    <script>
         let MY_SECRET_NAME = "Moazzam";        
         let MY_SECRET_PASS = "Moazzam1451";     
 
@@ -215,7 +215,6 @@
         const btnSuperLogout = document.getElementById('btnSuperLogout');
         const btnChangeSuperPass = document.getElementById('btnChangeSuperPass');
 
-        // Dynamic State UI Interface Control
         function setLoginInterface() {
             isAuthenticationLoginState = true;
             lblAuthState.innerText = "Admin Live Login";
@@ -224,24 +223,51 @@
             btnShiftState.innerText = "Naya Admin Account Create Karein (Register)";
             btnShiftState.style.display = "block";
             superAdminPanel.style.display = "none";
+            
+            // ✅ BOXES CLEANUP CONFIGURATION: Enforces total empty text nodes on default switch
+            txtAuthUser.value = "";
+            txtAuthPassword.value = "";
+            
             txtAuthUser.style.display = "block";
             txtAuthPassword.style.display = "block";
             btnSubmitAuth.style.display = "block";
+            
+            // If eye button wrap exists, restore it to visible layout block
+            const eyeWrap = document.getElementById('eyeToggleWrap');
+            if(eyeWrap) eyeWrap.style.display = "flex";
         }
-        setLoginInterface();
+        // 👑 SUPERADMIN CONTROL INTERACTOR: LIVE SECURE LOGOUT WITH TOTAL STORAGE WIPE
+        btnSuperLogout.onclick = function() {
+            sessionStorage.removeItem('idc_active_local_admin');
+            
+            // ✅ IMMEDIATE WIPE: Superadmin ka bacha hua data boxes se bilkul saaf (khatam) karna
+            txtAuthUser.value = "";
+            txtAuthPassword.value = "";
+            
+            setLoginInterface(); 
+            alert("Super Admin Identity session wiped out successfully. Boxes cleared.");
+        };
 
-        btnShiftState.addEventListener('click', () => {
-            isAuthenticationLoginState = !isAuthenticationLoginState;
-            superAdminPanel.style.display = "none";
-            if(isAuthenticationLoginState) {
-                setLoginInterface();
+        // 👁️ DYNAMIC PASSWORD EYE TOGGLE UTILITY IMPLEMENTATION
+        window.togglePasswordVisibilityDisplay = function() {
+            if (txtAuthPassword.type === "password") {
+                txtAuthPassword.type = "text";
+                document.getElementById('eyeIconEmblem').innerText = "🙈 Hide";
             } else {
-                lblAuthState.innerText = "Register New Live Admin";
-                lblAuthDesc.innerText = "Apna alag private account banane ke liye details enter karein.";
-                btnSubmitAuth.innerText = "Create Account";
-                btnShiftState.innerText = "Pehle se account majood hai? Login Karein";
+                txtAuthPassword.type = "password";
+                document.getElementById('eyeIconEmblem').innerText = "👁️ Show";
             }
-        });
+        };
+
+        btnChangeSuperPass.onclick = function() {
+            const promptNewPass = prompt(`🔑 Super Admin Password Engine:\n\nActive Owner Username: ${MY_SECRET_NAME}\nActive Owner Password: ${MY_SECRET_PASS}\n\nNaya Secret Password type karein:`, MY_SECRET_PASS);
+            if (promptNewPass === null) return;
+            if (promptNewPass.trim() === "") return alert("Password khali nahi rakha ja sakta!");
+
+            MY_SECRET_PASS = promptNewPass.trim();
+            localStorage.setItem('idc_super_pass', MY_SECRET_PASS);
+            alert(`✅ Success!\nSuperadmin password successfully updated to: ${MY_SECRET_PASS}`);
+        };
 
         // 📋 OFFLINE CONTROL BACKUP RENDERING ENGINE
         function renderUserManagementTable() {
@@ -304,25 +330,7 @@
                 };
             });
         }
-
-        // 👑 SUPERADMIN OPERATIONAL POWERS
-        btnSuperLogout.onclick = function() {
-            sessionStorage.removeItem('idc_active_local_admin');
-            setLoginInterface(); 
-            alert("Super Admin Identity session wiped out successfully.");
-        };
-
-        btnChangeSuperPass.onclick = function() {
-            const promptNewPass = prompt(`🔑 Super Admin Password Engine:\n\nActive Owner Username: ${MY_SECRET_NAME}\nActive Owner Password: ${MY_SECRET_PASS}\n\nNaya Secret Password type karein:`, MY_SECRET_PASS);
-            if (promptNewPass === null) return;
-            if (promptNewPass.trim() === "") return alert("Password khali nahi rakha ja sakta!");
-
-            MY_SECRET_PASS = promptNewPass.trim();
-            localStorage.setItem('idc_super_pass', MY_SECRET_PASS);
-            alert(`✅ Success!\nSuperadmin password successfully updated to: ${MY_SECRET_PASS}`);
-        };
-
-        // GATEWAY SUBMISSION GATE CHECK
+        // GATEWAY SUBMISSION GATE CHECK WITH IMMEDIATE AUTO WIPE ON ERROR
         btnSubmitAuth.addEventListener('click', () => {
             const inputUser = txtAuthUser.value.trim(); 
             const inputPass = txtAuthPassword.value;
@@ -342,6 +350,11 @@
                     txtAuthUser.style.display = "none";
                     txtAuthPassword.style.display = "none";
                     btnSubmitAuth.style.display = "none";
+                    
+                    // Hide eye wrap container inside dashboard grid view
+                    const eyeWrap = document.getElementById('eyeToggleWrap');
+                    if(eyeWrap) eyeWrap.style.display = "none";
+
                     superAdminPanel.style.display = "block";
                     renderUserManagementTable();
                 } else if(admins[inputUser] && admins[inputUser] === inputPass) {
@@ -350,6 +363,7 @@
                     window.location.href = "index.html"; 
                 } else {
                     alert("Ghalat Username ya Password! Please dobara check karein.");
+                    txtAuthPassword.value = ""; // Auto-wipe single field on wrong key entry
                 }
             } else {
                 if(inputUser.toLowerCase() === MY_SECRET_NAME.toLowerCase()) {
@@ -368,6 +382,21 @@
             }
         });
 
+        btnShiftState.addEventListener('click', () => {
+            isAuthenticationLoginState = !isAuthenticationLoginState;
+            superAdminPanel.style.display = "none";
+            if(isAuthenticationLoginState) {
+                setLoginInterface();
+            } else {
+                lblAuthState.innerText = "Register New Live Admin";
+                lblAuthDesc.innerText = "Apna alag private account banane ke liye details enter karein.";
+                btnSubmitAuth.innerText = "Create Account";
+                btnShiftState.innerText = "Pehle se account majood hai? Login Karein";
+                txtAuthUser.value = "";
+                txtAuthPassword.value = "";
+            }
+        });
+
         function handleKeyboardEnter(event) {
             if (event.key === "Enter") {
                 event.preventDefault();
@@ -376,6 +405,31 @@
         }
         txtAuthUser.addEventListener("keydown", handleKeyboardEnter);
         txtAuthPassword.addEventListener("keydown", handleKeyboardEnter);
+
+        // 👁️ DYNAMIC RUNTIME MARKUP EYE ICON GENERATOR CONTROL
+        document.addEventListener("DOMContentLoaded", () => {
+            const eyeContainer = document.createElement("div");
+            eyeContainer.id = "eyeToggleWrap";
+            eyeContainer.style.cssText = "display: flex; justify-content: flex-end; align-items: center; width: 100%; margin: -5px 0 15px 0; padding: 0 5px;";
+            
+            const eyeBtn = document.createElement("span");
+            eyeBtn.id = "eyeIconEmblem";
+            eyeBtn.innerText = "👁️ Show Password";
+            eyeBtn.style.cssText = "font-size: 12px; color: #002060; font-weight: bold; cursor: pointer; text-decoration: underline; background: transparent; border: none; outline: none; user-select: none;";
+            
+            eyeBtn.onclick = window.togglePasswordVisibilityDisplay;
+            eyeContainer.appendChild(eyeBtn);
+            
+            // Inject inline exact block arrangement position right beneath password element field box
+            txtAuthPassword.parentNode.insertBefore(eyeContainer, txtAuthPassword.nextSibling);
+            
+            // Read runtime adjustments storage variables parameters tracking modifications
+            if(localStorage.getItem('idc_super_pass')) {
+                MY_SECRET_PASS = localStorage.getItem('idc_super_pass');
+            }
+            setLoginInterface();
+        });
     </script>
 </body>
 </html>
+
