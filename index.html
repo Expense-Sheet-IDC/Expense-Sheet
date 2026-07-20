@@ -586,9 +586,9 @@
     <!-- JAVASCRIPT STATE ENGINE & FIREBASE STABLE PRODUCTION MODULES      -->
     <!-- ================================================================= -->
     <script type="module">
-        import { initializeApp } from "https://expense-sheet-rose.vercel.app";
-        import { getAuth, signOut, onAuthStateChanged } from "https://expense-sheet-rose.vercel.app";
-        import { getFirestore, collection, doc, setDoc, getDoc, addDoc, updateDoc, deleteDoc, query, where, onSnapshot } from "https://expense-sheet-rose.vercel.app";
+        import { initializeApp } from "https://unpkg.com";
+import { getAuth, signOut, onAuthStateChanged } from "https://unpkg.com";
+import { getFirestore, collection, doc, setDoc, getDoc, addDoc, updateDoc, deleteDoc, query, where, onSnapshot } from "https://unpkg.com";
 
         // IMPORTANT TODO: Paste your exact credentials from Firebase Console here
         const firebaseConfig = {
