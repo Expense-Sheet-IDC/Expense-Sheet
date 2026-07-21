@@ -194,196 +194,135 @@
             Designed by M. Moazzam | © 2026 All Rights Reserved
         </div>
     </div>
- <!-- REAL-TIME ONLINE CLOUD DATABASE CORE SCRIPTS ENGINE -->
-    <!-- 👑 PERMANENT CORS FIX: NO INTERNET IMPORTS DIRECT SCRIPTS ENGINE -->
+        <!-- REAL-TIME ONLINE CLOUD DATABASE CORE SCRIPTS ENGINE -->
+    <script src="https://gstatic.com"></script>
+    <script src="https://gstatic.com"></script>
+
     <script>
-        // Inline Bundle framework to prevent CORS injection errors
-        (function() {
-            const scriptApp = document.createElement('script');
-            scriptApp.src = "https://gstatic.com";
-            const scriptDB = document.createElement('script');
-            scriptDB.src = "https://gstatic.com";
-            
-            document.head.appendChild(scriptApp);
-            scriptApp.onload = () => {
-                document.head.appendChild(scriptDB);
-                scriptDB.onload = () => { initSystemCoreGateway(); };
-            };
-        })();
+        const firebaseConfig = { databaseURL: "https://firebaseio.com" };
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+        const db = firebase.database();
 
-        function initSystemCoreGateway() {
-            const firebaseConfig = {
-                databaseURL: "https://firebaseio.com"
-            };
+        let MY_SECRET_NAME = "Moazzam";        
+        let MY_SECRET_PASS = "Moazzam1451";     
+        let isAuthenticationLoginState = true;
 
-            if (!firebase.apps.length) {
-                firebase.initializeApp(firebaseConfig);
-            }
-            const db = firebase.database();
+        const lblAuthState = document.getElementById('lblAuthState');
+        const lblAuthDesc = document.getElementById('lblAuthDesc');
+        const txtAuthUser = document.getElementById('txtAuthUser');
+        const txtAuthPassword = document.getElementById('txtAuthPassword');
+        const btnSubmitAuth = document.getElementById('btnSubmitAuth');
+        const btnShiftState = document.getElementById('btnShiftState');
+        const superAdminPanel = document.getElementById('superAdminPanel');
+        const userTableBody = document.getElementById('userTableBody');
+        const btnSuperLogout = document.getElementById('btnSuperLogout');
+        const btnChangeSuperPass = document.getElementById('btnChangeSuperPass');
 
-            let MY_SECRET_NAME = "Moazzam";        
-            let MY_SECRET_PASS = "Moazzam1451";     
-            let isAuthenticationLoginState = true;
-
-            const lblAuthState = document.getElementById('lblAuthState');
-            const lblAuthDesc = document.getElementById('lblAuthDesc');
-            const txtAuthUser = document.getElementById('txtAuthUser');
-            const txtAuthPassword = document.getElementById('txtAuthPassword');
-            const btnSubmitAuth = document.getElementById('btnSubmitAuth');
-            const btnShiftState = document.getElementById('btnShiftState');
-            const superAdminPanel = document.getElementById('superAdminPanel');
-            const userTableBody = document.getElementById('userTableBody');
-            const btnSuperLogout = document.getElementById('btnSuperLogout');
-            const btnChangeSuperPass = document.getElementById('btnChangeSuperPass');
-
-            function setLoginInterface() {
-                isAuthenticationLoginState = true;
-                lblAuthState.innerText = "Admin Live Login";
-                lblAuthDesc.innerText = "Apna unique admin credentials enter kar ke securely online connect hon.";
-                btnSubmitAuth.innerText = "Secure Login";
-                btnShiftState.innerText = "Naya Admin Account Create Karein (Register)";
-                btnShiftState.style.display = "block";
-                superAdminPanel.style.display = "none";
-                txtAuthUser.style.display = "block";
-                txtAuthPassword.style.display = "block";
-                btnSubmitAuth.style.display = "block";
-            }
-            setLoginInterface();
-
-            btnShiftState.addEventListener('click', () => {
-                isAuthenticationLoginState = !isAuthenticationLoginState;
-                superAdminPanel.style.display = "none";
-                if(isAuthenticationLoginState) {
-                    setLoginInterface();
-                } else {
-                    lblAuthState.innerText = "Register New Live Admin";
-                    lblAuthDesc.innerText = "Apna alag private account banane ke liye details enter karein.";
-                    btnSubmitAuth.innerText = "Create Account";
-                    btnShiftState.innerText = "Pehle se account majood hai? Login Karein";
-                }
-            });
-
-            async function renderUserManagementTable() {
-                userTableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#94a3b8; font-style:italic;">Loading live accounts...</td></tr>`;
-                try {
-                    const snapshot = await db.ref('idc_users').once('value');
-                    userTableBody.innerHTML = "";
-                    let admins = snapshot.exists() ? snapshot.val() : {};
-                    let staffUsers = Object.keys(admins).filter(user => user.toLowerCase() !== MY_SECRET_NAME.toLowerCase());
-
-                    if(staffUsers.length === 0) {
-                        userTableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#94a3b8; font-style:italic;">Koi staff account register nahi hai.</td></tr>`;
-                        return;
-                    }
-
-                    staffUsers.forEach(user => {
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `
-                            <td style="font-weight:600; color:#334155;">${user}</td>
-                            <td style="color:#0d9488; font-family:monospace; font-weight:bold;">${admins[user]}</td>
-                            <td style="text-align: center;">
-                                <div style="display:flex; gap:5px; justify-content:center;">
-                                    <button class="btn-panel-edit" data-username="${user}" style="background-color:#d97706; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px; font-weight:bold;">Edit Pass</button>
-                                    <button class="btn-panel-delete" data-username="${user}" style="background-color:#dc2626; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px; font-weight:bold;">Delete</button>
-                                </div>
-                            </td>
-                        `;
-                        userTableBody.appendChild(tr);
-                    });
-
-                    document.querySelectorAll('.btn-panel-edit').forEach(btn => {
-                        btn.onclick = async function(e) {
-                            const targetUser = e.target.dataset.username;
-                            const oldPassword = admins[targetUser];
-                            const newPassword = prompt(`🔑 Change Password for '${targetUser}':\nPurana Password: ${oldPassword}\n\nNaya Password input karein:`, oldPassword);
-                            if (newPassword === null) return; 
-                            if (newPassword.trim() === "") return alert("Password khali nahi ho sakta!");
-                            await db.ref('idc_users/' + targetUser).set(newPassword.trim());
-                            alert(`✅ Done! Account '${targetUser}' ka password successfully update ho gaya.`);
-                            renderUserManagementTable(); 
-                        };
-                    });
-
-                    document.querySelectorAll('.btn-panel-delete').forEach(btn => {
-                        btn.onclick = async function(e) {
-                            const targetToDelete = e.target.dataset.username;
-                            if(confirm(`⚠️ WARNING:\nKya aap account '${targetToDelete}' aur us ka poora cloud expense data permanently delete karna chahte hain?`)) {
-                                await db.ref('idc_users/' + targetToDelete).remove();
-                                await db.ref('idc_expenses/' + targetToDelete).remove();
-                                alert(`🗑️ Account '${targetToDelete}' permanently removed.`);
-                                renderUserManagementTable();
-                            }
-                        };
-                    });
-                } catch (err) {
-                    alert("Cloud read error: " + err.message);
-                }
-            }
-
-            btnSuperLogout.onclick = function() {
-                sessionStorage.removeItem('idc_active_local_admin');
-                setLoginInterface(); 
-                alert("Super Admin session wiped out.");
-            };
-
-            btnChangeSuperPass.onclick = async function() {
-                const promptNewPass = prompt(`🔑 Super Admin Password Engine:\n\nActive Owner Username: ${MY_SECRET_NAME}\nActive Owner Password: ${MY_SECRET_PASS}\n\nNaya Secret Password type karein:`, MY_SECRET_PASS);
-                if (promptNewPass === null) return;
-                if (promptNewPass.trim() === "") return alert("Password khali nahi rakha ja sakta!");
-                MY_SECRET_PASS = promptNewPass.trim();
-                await db.ref('idc_users/' + MY_SECRET_NAME).set(MY_SECRET_PASS);
-                alert(`✅ Success! Updated.`);
-            };
-
-            btnSubmitAuth.addEventListener('click', async () => {
-                const inputUser = txtAuthUser.value.trim(); 
-                const inputPass = txtAuthPassword.value;
-                if(!inputUser || !inputPass) return alert("Username aur Password enter karein!");
-
-                try {
-                    const snapshot = await db.ref('idc_users').once('value');
-                    let admins = snapshot.exists() ? snapshot.val() : {};
-                    
-                    if (!admins[MY_SECRET_NAME]) {
-                        admins[MY_SECRET_NAME] = MY_SECRET_PASS;
-                        await db.ref('idc_users/' + MY_SECRET_NAME).set(MY_SECRET_PASS);
-                    }
-
-                    if(isAuthenticationLoginState) {
-                        if(inputUser.toLowerCase() === MY_SECRET_NAME.toLowerCase() && inputPass === admins[MY_SECRET_NAME]) {
-                            alert("👑 Welcome Super Admin Moazzam!");
-                            lblAuthState.innerText = "Master Control Dashboard";
-                            lblAuthDesc.innerText = "Yahan se aap accounts manage kar sakte hain.";
-                            btnShiftState.style.display = "none";
-                            txtAuthUser.style.display = "none";
-                            txtAuthPassword.style.display = "none";
-                            btnSubmitAuth.style.display = "none";
-                            superAdminPanel.style.display = "block";
-                            renderUserManagementTable();
-                        } else if(admins[inputUser] && admins[inputUser] === inputPass) {
-                            alert("Welcome to IDC Ledger.");
-                            sessionStorage.setItem('idc_active_local_admin', inputUser);
-                            window.location.href = "index.html"; 
-                        } else {
-                            alert("Ghalat Username ya Password!");
-                        }
-                    } else {
-                        if(inputUser.toLowerCase() === MY_SECRET_NAME.toLowerCase()) return alert("Reserved name!");
-                        if(admins[inputUser]) return alert("Username pehle se register hai!");
-                        await db.ref('idc_users/' + inputUser).set(inputPass);
-                        alert("Naya Admin Account ban gaya!");
-                        txtAuthUser.value = ''; txtAuthPassword.value = '';
-                        setLoginInterface();
-                    }
-                } catch (err) {
-                    alert("Database operation failure: " + err.message);
-                }
-            });
-
-            function handleKeyboardEnter(e) { if (e.key === "Enter") { e.preventDefault(); btnSubmitAuth.click(); } }
-            txtAuthUser.addEventListener("keydown", handleKeyboardEnter);
-            txtAuthPassword.addEventListener("keydown", handleKeyboardEnter);
+        function setLoginInterface() {
+            isAuthenticationLoginState = true;
+            lblAuthState.innerText = "Admin Live Login";
+            lblAuthDesc.innerText = "Apna unique admin credentials enter kar ke securely online connect hon.";
+            btnSubmitAuth.innerText = "Secure Login";
+            btnShiftState.innerText = "Naya Admin Account Create Karein (Register)";
+            btnShiftState.style.display = "block";
+            superAdminPanel.style.display = "none";
+            txtAuthUser.style.display = "block";
+            txtAuthPassword.style.display = "block";
+            btnSubmitAuth.style.display = "block";
         }
+        setLoginInterface();
+
+        btnShiftState.addEventListener('click', () => {
+            isAuthenticationLoginState = !isAuthenticationLoginState;
+            superAdminPanel.style.display = "none";
+            if(isAuthenticationLoginState) {
+                setLoginInterface();
+            } else {
+                lblAuthState.innerText = "Register New Live Admin";
+                lblAuthDesc.innerText = "Apna alag private account banane ke liye details enter karein.";
+                btnSubmitAuth.innerText = "Create Account";
+                btnShiftState.innerText = "Pehle se account majood hai? Login Karein";
+            }
+        });
+
+        async function renderUserManagementTable() {
+            userTableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#94a3b8; font-style:italic;">Loading live accounts...</td></tr>`;
+            try {
+                const snapshot = await db.ref('idc_users').once('value');
+                userTableBody.innerHTML = "";
+                let admins = snapshot.exists() ? snapshot.val() : {};
+                let staffUsers = Object.keys(admins).filter(user => user.toLowerCase() !== MY_SECRET_NAME.toLowerCase());
+
+                if(staffUsers.length === 0) {
+                    userTableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#94a3b8; font-style:italic;">Koi staff account register nahi hai.</td></tr>`;
+                    return;
+                }
+
+                staffUsers.forEach(user => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td>${user}</td><td>${admins[user]}</td><td style="text-align: center;"><button class="btn-panel-edit" data-username="${user}" style="background-color:#d97706; color:white; border:none; padding:4px 8px; border-radius:4px; margin-right:5px;">Edit</button><button class="btn-panel-delete" data-username="${user}" style="background-color:#dc2626; color:white; border:none; padding:4px 8px; border-radius:4px;">Delete</button></td>`;
+                    userTableBody.appendChild(tr);
+                });
+
+                document.querySelectorAll('.btn-panel-edit').forEach(btn => {
+                    btn.onclick = async function(e) {
+                        const targetUser = e.target.dataset.username;
+                        const newPassword = prompt(`Naya Password:`, admins[targetUser]);
+                        if (!newPassword) return;
+                        await db.ref('idc_users/' + targetUser).set(newPassword.trim());
+                        renderUserManagementTable(); 
+                    };
+                });
+
+                document.querySelectorAll('.btn-panel-delete').forEach(btn => {
+                    btn.onclick = async function(e) {
+                        const targetToDelete = e.target.dataset.username;
+                        if(confirm(`Delete account '${targetToDelete}'?`)) {
+                            await db.ref('idc_users/' + targetToDelete).remove();
+                            await db.ref('idc_expenses/' + targetToDelete).remove();
+                            renderUserManagementTable();
+                        }
+                    };
+                });
+            } catch (err) { alert(err.message); }
+        }
+
+        btnSuperLogout.onclick = function() { setLoginInterface(); };
+
+        btnChangeSuperPass.onclick = async function() {
+            const promptNewPass = prompt(`Naya Super Admin Password:`, MY_SECRET_PASS);
+            if (!promptNewPass) return;
+            MY_SECRET_PASS = promptNewPass.trim();
+            await db.ref('idc_users/' + MY_SECRET_NAME).set(MY_SECRET_PASS);
+            alert("Updated!");
+        };
+
+        btnSubmitAuth.addEventListener('click', async () => {
+            const inputUser = txtAuthUser.value.trim(); 
+            const inputPass = txtAuthPassword.value;
+            if(!inputUser || !inputPass) return alert("Fields fill karein!");
+
+            try {
+                const snapshot = await db.ref('idc_users').once('value');
+                let admins = snapshot.exists() ? snapshot.val() : {};
+                if (!admins[MY_SECRET_NAME]) { await db.ref('idc_users/' + MY_SECRET_NAME).set(MY_SECRET_PASS); admins[MY_SECRET_NAME] = MY_SECRET_PASS; }
+
+                if(isAuthenticationLoginState) {
+                    if(inputUser.toLowerCase() === MY_SECRET_NAME.toLowerCase() && inputPass === admins[MY_SECRET_NAME]) {
+                        superAdminPanel.style.display = "block";
+                        txtAuthUser.style.display = "none"; txtAuthPassword.style.display = "none"; btnSubmitAuth.style.display = "none"; btnShiftState.style.display = "none";
+                        renderUserManagementTable();
+                    } else if(admins[inputUser] && admins[inputUser] === inputPass) {
+                        sessionStorage.setItem('idc_active_local_admin', inputUser);
+                        window.location.href = "index.html"; 
+                    } else { alert("Ghalat Username ya Password!"); }
+                } else {
+                    if(admins[inputUser] || inputUser.toLowerCase() === MY_SECRET_NAME.toLowerCase()) return alert("Username unavailable!");
+                    await db.ref('idc_users/' + inputUser).set(inputPass);
+                    alert("Account Create Hogya!"); setLoginInterface();
+                }
+            } catch (err) { alert(err.message); }
+        });
     </script>
 </body>
 </html>
