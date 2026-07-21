@@ -75,7 +75,12 @@
         <h2 id="lblAuthState">Admin Live Login</h2>
         <p id="lblAuthDesc">Apna unique admin credentials enter kar ke securely online connect hon.</p>
         
+        <!-- INPUT CONTROLS GRIDS -->
         <input type="text" id="txtAuthUser" class="auth-field" placeholder="Admin Username" required>
+        
+        <!-- 📱 MOBILE NUMBER FIELD: REGISTER STATE MEIN AUTOMATICALLY SHOW HOGA -->
+        <input type="tel" id="txtAuthPhone" class="auth-field" placeholder="Admin Mobile Number (e.g. 03001234567)" style="display: none;">
+        
         <input type="password" id="txtAuthPassword" class="auth-field" placeholder="Admin Password" required>
         
         <button id="btnSubmitAuth" class="btn-auth-trigger">Secure Login</button>
@@ -88,8 +93,9 @@
                 <thead>
                     <tr>
                         <th>Username</th>
+                        <th>Phone Number</th>
                         <th>Current Password</th>
-                        <th style="width: 35%; text-align: center;">Actions</th>
+                        <th style="width: 25%; text-align: center;">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="userTableBody">
@@ -103,28 +109,31 @@
         </div>
         <div class="auth-footer">Designed by M. Moazzam | © 2026 All Rights Reserved</div>
     </div>
+    <!-- REAL-TIME INTERACTIVE CLOUD LEDGER CORE SYSTEM -->
+    <script>
+        (function() {
+            var s1 = document.createElement('script');
+            s1.src = "https://cloudflare.com";
+            document.head.appendChild(s1);
+            s1.onload = function() {
+                var s2 = document.createElement('script');
+                s2.src = "https://gstatic.com";
+                document.head.appendChild(s2);
+                s2.onload = function() {
+                    var s3 = document.createElement('script');
+                    s3.src = "https://gstatic.com";
+                    document.head.appendChild(s3);
+                    s3.onload = function() { initLedgerEngine(); };
+                };
+            };
+        })();
 
-    <!-- 📊 APP VISUAL MODULE 2: DATA LEDGER WORKSPACE CONTAINER -->
-    <div id="appWorkspace" class="container">
-        <div class="admin-meta-header">
-            <div><strong>Active Administrator: </strong><span id="lblActiveAdminEmail">Checking Session...</span></div>
-            <button id="btnSignOutSession" class="btn-logout-gate">Logout Account</button>
-        </div>
-        <header class="main-header">
-            <div class="header-title-container">
-                <div class="idc-badge-emblem">IDC</div>
-                <h1>ISLAMABAD DIAGNOSTIC CENTER (PVT) LTD.</h1>
-            </div>
-            <p style="text-align:center; margin-top:5px;">Monthly Expense Sheet IDC G-8 Branch Islamabad</p>
-        </header>
-<script>
-            function initLedgerEngine() {
+        function initLedgerEngine() {
             if (!firebase.apps.length) { 
                 firebase.initializeApp({ databaseURL: "https://firebaseio.com" }); 
             }
             var db = firebase.database();
 
-            // 👑 SECURE SUPERADMIN POWERS INTERFACES ENGINE
             let MY_SECRET_NAME = "Moazzam";        
             let MY_SECRET_PASS = "Moazzam1451";     
             let isAuthenticationLoginState = true;
@@ -134,6 +143,7 @@
             const lblAuthState = document.getElementById('lblAuthState');
             const lblAuthDesc = document.getElementById('lblAuthDesc');
             const txtAuthUser = document.getElementById('txtAuthUser');
+            const txtAuthPhone = document.getElementById('txtAuthPhone');
             const txtAuthPassword = document.getElementById('txtAuthPassword');
             const btnSubmitAuth = document.getElementById('btnSubmitAuth');
             const btnShiftState = document.getElementById('btnShiftState');
@@ -151,7 +161,7 @@
             for(let i=2024; i<=2030; i++) { ySel.options[ySel.options.length] = new Option(i, i); }
 
             let currentAdminToken = sessionStorage.getItem('idc_active_local_admin') || "Staff";
-            let expenses = []; let BUDGET = 0; let editTargetDocId = -1;
+            let expenses = []; var BUDGET = 0; var editTargetDocId = -1;
 
             const lblActiveAdminEmail = document.getElementById('lblActiveAdminEmail');
             const btnSignOutSession = document.getElementById('btnSignOutSession');
@@ -167,7 +177,6 @@
             const searchFilter = document.getElementById('search-filter');
             const categoryFilter = document.getElementById('category-filter');
 
-            // 🚀 BOOT ROUTER CONFIGURATION DETERMINATOR
             if(sessionStorage.getItem('idc_active_local_admin')) {
                 authWorkspaceBlock.style.display = 'none';
                 appWorkspace.style.display = 'block';
@@ -188,6 +197,7 @@
                 btnShiftState.style.display = "block";
                 superAdminPanel.style.display = "none";
                 txtAuthUser.style.display = "block";
+                txtAuthPhone.style.display = "none";
                 txtAuthPassword.style.display = "block";
                 btnSubmitAuth.style.display = "block";
             }
@@ -202,10 +212,11 @@
                     lblAuthDesc.innerText = "Apna alag private account banane ke liye details enter karein.";
                     btnSubmitAuth.innerText = "Create Account";
                     btnShiftState.innerText = "Pehle se account majood hai? Login Karein";
+                    txtAuthPhone.style.display = "block";
                 }
             };
             async function renderUserManagementTable() {
-                userTableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#94a3b8; font-style:italic;">Loading live accounts...</td></tr>`;
+                userTableBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#94a3b8; font-style:italic;">Loading live accounts...</td></tr>`;
                 try {
                     const snapshot = await db.ref('idc_users').once('value');
                     userTableBody.innerHTML = "";
@@ -213,22 +224,26 @@
                     let staffUsers = Object.keys(admins).filter(user => user.toLowerCase() !== MY_SECRET_NAME.toLowerCase());
 
                     if(staffUsers.length === 0) {
-                        userTableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#94a3b8; font-style:italic;">Koi staff account register nahi hai.</td></tr>`;
+                        userTableBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#94a3b8; font-style:italic;">Koi staff account register nahi hai.</td></tr>`;
                         return;
                     }
 
                     staffUsers.forEach(user => {
+                        let userData = typeof admins[user] === 'object' ? admins[user] : { password: admins[user], phone: "N/A" };
                         const tr = document.createElement('tr');
-                        tr.innerHTML = `<td>${user}</td><td>${admins[user]}</td><td style="text-align: center;"><button class="btn-panel-edit" data-username="${user}" style="background-color:#d97706; color:white; border:none; padding:4px 8px; border-radius:4px; margin-right:5px; cursor:pointer;">Edit</button><button class="btn-panel-delete" data-username="${user}" style="background-color:#dc2626; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">Delete</button></td>`;
+                        tr.innerHTML = `<td>${user}</td><td>${userData.phone || "N/A"}</td><td>${userData.password}</td><td style="text-align: center;"><button class="btn-panel-edit" data-username="${user}" style="background-color:#d97706; color:white; border:none; padding:4px 8px; border-radius:4px; margin-right:5px; cursor:pointer;">Edit</button><button class="btn-panel-delete" data-username="${user}" style="background-color:#dc2626; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">Delete</button></td>`;
                         userTableBody.appendChild(tr);
                     });
 
                     document.querySelectorAll('.btn-panel-edit').forEach(btn => {
                         btn.onclick = async function(e) {
                             const targetUser = e.target.dataset.username;
-                            const newPassword = prompt(`Naya Password:`, admins[targetUser]);
+                            let currentData = typeof admins[targetUser] === 'object' ? admins[targetUser] : { password: admins[targetUser], phone: "N/A" };
+                            const newPassword = prompt(`Naya Password:`, currentData.password);
                             if (!newPassword) return;
-                            await db.ref('idc_users/' + targetUser).set(newPassword.trim());
+                            
+                            let updatePayload = { password: newPassword.trim(), phone: currentData.phone || "N/A" };
+                            await db.ref('idc_users/' + targetUser).set(updatePayload);
                             renderUserManagementTable(); 
                         };
                     });
@@ -252,41 +267,50 @@
                 const promptNewPass = prompt(`Naya Super Admin Password:`, MY_SECRET_PASS);
                 if (!promptNewPass) return;
                 MY_SECRET_PASS = promptNewPass.trim();
-                await db.ref('idc_users/' + MY_SECRET_NAME).set(MY_SECRET_PASS);
+                await db.ref('idc_users/' + MY_SECRET_NAME).set({ password: MY_SECRET_PASS, phone: "03000000000" });
                 alert("Updated!");
             };
 
             btnSubmitAuth.onclick = async function() {
                 const inputUser = txtAuthUser.value.trim(); 
                 const inputPass = txtAuthPassword.value;
-                if(!inputUser || !inputPass) return alert("Fields fill karein!");
+                const inputPhone = txtAuthPhone.value.trim();
+
+                if(!inputUser || !inputPass) return alert("Username aur Password fill karein!");
+                if(!isAuthenticationLoginState && !inputPhone) return alert("Mobile number enter karna lazmi hai!");
 
                 try {
                     const snapshot = await db.ref('idc_users').once('value');
                     let admins = snapshot.exists() ? snapshot.val() : {};
-                    if (!admins[MY_SECRET_NAME]) { await db.ref('idc_users/' + MY_SECRET_NAME).set(MY_SECRET_PASS); admins[MY_SECRET_NAME] = MY_SECRET_PASS; }
+                    if (!admins[MY_SECRET_NAME]) { 
+                        await db.ref('idc_users/' + MY_SECRET_NAME).set({ password: MY_SECRET_PASS, phone: "03000000000" }); 
+                        admins[MY_SECRET_NAME] = { password: MY_SECRET_PASS, phone: "03000000000" }; 
+                    }
 
                     if(isAuthenticationLoginState) {
-                        if(inputUser.toLowerCase() === MY_SECRET_NAME.toLowerCase() && inputPass === admins[MY_SECRET_NAME]) {
+                        let targetAdmin = admins[inputUser];
+                        let targetPass = typeof targetAdmin === 'object' ? targetAdmin.password : targetAdmin;
+
+                        if(inputUser.toLowerCase() === MY_SECRET_NAME.toLowerCase() && inputPass === targetPass) {
                             superAdminPanel.style.display = "block";
                             txtAuthUser.style.display = "none"; txtAuthPassword.style.display = "none"; btnSubmitAuth.style.display = "none"; btnShiftState.style.display = "none";
                             renderUserManagementTable();
-                        } else if(admins[inputUser] && admins[inputUser] === inputPass) {
+                        } else if(targetAdmin && targetPass === inputPass) {
                             sessionStorage.setItem('idc_active_local_admin', inputUser);
                             currentAdminToken = inputUser;
                             authWorkspaceBlock.style.display = 'none';
                             appWorkspace.style.display = 'block';
                             lblActiveAdminEmail.innerText = currentAdminToken.toUpperCase();
-                            dSel.value = new Date().getDate().toString();
-                            mSel.value = months[new Date().getMonth()];
-                            ySel.value = new Date().getFullYear().toString();
-                            document.getElementById('exp-date').value = new Date().toISOString().split('T')[0];
                             fetchCloudData();
                         } else { alert("Ghalat Username ya Password!"); }
                     } else {
                         if(admins[inputUser] || inputUser.toLowerCase() === MY_SECRET_NAME.toLowerCase()) return alert("Username unavailable!");
-                        await db.ref('idc_users/' + inputUser).set(inputPass);
-                        alert("Account Create Hogya!"); setLoginInterface();
+                        
+                        let newUserPayload = { password: inputPass, phone: inputPhone };
+                        await db.ref('idc_users/' + inputUser).set(newUserPayload);
+                        alert("Account Create Hogya with Mobile Number!"); 
+                        txtAuthPhone.value = '';
+                        setLoginInterface();
                     }
                 } catch (err) { alert(err.message); }
             };
@@ -333,7 +357,7 @@
 
                 db.ref('idc_expenses/' + currentAdminToken + '/' + tid).set(rData).then(() => {
                     if (editTargetDocId !== -1) { editTargetDocId = -1; formTitle.innerText = "Add New Expense Row"; btnSubmit.innerText = "Add Entry"; btnSubmit.style.backgroundColor = "#002060"; }
-                    form.reset(); document.getElementById('exp-date').value = new Date().toISOString().split('T')[0];
+                    form.reset(); document.getElementById('exp-date').value = new Date().toISOString().split('T');
                     fetchCloudData();
                 });
             };
