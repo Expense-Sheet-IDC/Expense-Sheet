@@ -747,10 +747,10 @@
 
                 attachDynamicRowListeners();
             };
-                        function attachDynamicRowListeners() {
+                    function attachDynamicRowListeners() {
                 document.querySelectorAll('.btn-delete').forEach(function(b) {
                     b.onclick = function(e) {
-                        if(confirm("Delete entry?")) {
+                        if(confirm("Delete entry from cloud?")) {
                             db.ref('idc_expenses/' + currentAdminToken + '/' + e.target.dataset.id).remove().then(function() {
                                 fetchCloudData();
                             }).catch(function(err) { alert(err.message); });
@@ -775,7 +775,7 @@
             }
 
             document.getElementById('btnFlushData').onclick = function() {
-                if(confirm("Clear date data?")) {
+                if(confirm("Permanently clear online database date data?")) {
                     var targetsToRemove = expenses.filter(function(item) {
                         return item.selectedDay === dSel.value && item.selectedMonth === mSel.value && item.selectedYear === ySel.value && item.ownerUid === currentAdminToken;
                     });
@@ -814,7 +814,7 @@
                     document.body.appendChild(l);
                     l.click();
                     document.body.removeChild(l);
-                });
+                }).catch(function(err) { alert("Export failed: " + err.message); });
             };
 
             document.getElementById('btnPrintReport').onclick = function() { window.print(); };
@@ -823,4 +823,3 @@
     </script>
 </body>
 </html>
-
