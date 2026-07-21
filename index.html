@@ -198,7 +198,6 @@
             justify-content: flex-end;
             flex-wrap: wrap;
         }
-
         .btn-toolbar {
             padding: 10px 15px;
             border: none;
@@ -214,6 +213,7 @@
         .btn-toolbar:hover { opacity: 0.9; }
         .btn-clear-data { background-color: #dc2626; }
         .btn-excel { background-color: #16a34a; }
+        .btn-jpg { background-color: #d97706; }
 
         /* Filter bar block styling */
         .filter-section {
@@ -440,11 +440,17 @@
             <div class="custom-group">
                 <label for="sheet-day">Date:</label>
                 <select id="sheet-day">
-                    <script>
-                        for(let i=1; i<=31; i++) {
-                            document.write(`<option value="${i}">${i}</option>`);
-                        }
-                    </script>
+                    <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+                    <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+                    <option value="7">7</option><option value="8">8</option><option value="9">9</option>
+                    <option value="10">10</option><option value="11">11</option><option value="12">12</option>
+                    <option value="13">13</option><option value="14">14</option><option value="15">15</option>
+                    <option value="16">16</option><option value="17">17</option><option value="18">18</option>
+                    <option value="19">19</option><option value="20">20</option><option value="21">21</option>
+                    <option value="22">22</option><option value="23">23</option><option value="24">24</option>
+                    <option value="25">25</option><option value="26">26</option><option value="27">27</option>
+                    <option value="28">28</option><option value="29">29</option><option value="30">30</option>
+                    <option value="31">31</option>
                 </select>
             </div>
 
@@ -486,7 +492,7 @@
         <section class="summary-section">
             <div class="card budget-card">
                 <h3>Total Budget</h3>
-                <p id="total-budget">PKR 500,000</p>
+                <p id="total-budget">PKR 0</p>
                 <button class="btn-edit-budget" id="btnEditBudgetTrigger">Edit Budget</button>
             </div>
             <div class="card expense-card">
@@ -495,12 +501,14 @@
             </div>
             <div class="card remaining-card" id="remaining-card-block">
                 <h3>Remaining</h3>
-                <p id="remaining-budget">PKR 500,000</p>
+                <p id="remaining-budget">PKR 0</p>
             </div>
         </section>
+
         <!-- DYNAMIC ACTION TOOLBAR -->
         <div class="toolbar">
             <button class="btn-toolbar btn-excel" id="btnExportToExcel">📊 Export to Excel</button>
+            <button class="btn-toolbar btn-jpg" id="btnExportToJPG">🖼️ Download as JPG</button>
             <button class="btn-toolbar btn-clear-data" id="btnFlushData">🗑️ Clear Sheet Data</button>
             <button class="btn-toolbar" id="btnPrintReport">🖨️ Save Report (PDF) / Print</button>
         </div>
@@ -568,7 +576,6 @@
                 </tfoot>
             </table>
         </section>
-
         <!-- OFFICIAL CORPORATE SIGN SIGNATURE BOXES -->
         <section class="signature-section">
             <div class="sig-box">Prepared By</div>
@@ -581,13 +588,26 @@
             Designed by <span class="portal-footer-author">M. Moazzam</span> | © 2026 All Rights Reserved
         </footer>
     </div>
-       <!-- ================================================================= -->
-    <!-- JAVASCRIPT SYSTEM CONTROLLER STATE ENGINE - PART 1               -->
-    <!-- ================================================================= -->
-    <script>
+
+    <!-- GRAPHICS IMAGE EXPORT INTERFACE MODULE -->
+    <script src="https://cloudflare.com"></script>
+
+    <!-- REAL-TIME ONLINE INTERACTIVE BACKEND SYSTEM SCRIPTS -->
+    <script type="module">
+        import { initializeApp } from "https://gstatic.com";
+        import { getDatabase, ref, set, get, child, remove } from "https://gstatic.com";
+
+        // Firebase Sync Infrastructure Configuration Credentials
+        const firebaseConfig = {
+            databaseURL: "https://firebaseio.com"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
         let currentAdminToken = sessionStorage.getItem('idc_active_local_admin') || "Staff";
-        let expenses = JSON.parse(localStorage.getItem('idc_local_expenses')) || []; 
-        let BUDGET = parseFloat(localStorage.getItem('idc_local_budget_' + currentAdminToken)) || 500000;
+        let expenses = []; 
+        let BUDGET = 0;
         let editTargetDocId = -1; 
 
         // DOM Nodes Framework References
@@ -616,13 +636,14 @@
             lblActiveAdminEmail.innerText = currentAdminToken.toUpperCase();
             appWorkspace.style.display = 'block';
             initPeriodDefaultsSetting();
-            totalBudgetEl.innerText = `PKR ${BUDGET.toLocaleString()}`;
+            fetchCloudData();
         }
 
         btnSignOutSession.addEventListener('click', () => {
             sessionStorage.removeItem('idc_active_local_admin');
             window.location.href = "login.html";
         });
+
         function initPeriodDefaultsSetting() {
             const currentMonthIndex = new Date().getMonth();
             const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -632,18 +653,45 @@
             document.getElementById('exp-date').value = new Date().toISOString().split('T')[0];
         }
 
-        window.changeBudget = function() {
+        // Live Download Fetch Sequence Architecture
+        async function fetchCloudData() {
+            try {
+                // Fetch user specific dynamic metrics budget configuration bounds
+                const budgetSnapshot = await get(ref(db, 'idc_budgets/' + currentAdminToken));
+                BUDGET = budgetSnapshot.exists() ? parseFloat(budgetSnapshot.val()) : 0;
+                totalBudgetEl.innerText = `PKR ${BUDGET.toLocaleString()}`;
+
+                // Fetch global real-time synchronized ledger records database
+                const expenseSnapshot = await get(ref(db, 'idc_expenses'));
+                if (expenseSnapshot.exists()) {
+                    const rawData = expenseSnapshot.val();
+                    expenses = [];
+                    // Flat structural data map parsing process
+                    Object.keys(rawData).forEach(userId => {
+                        Object.keys(rawData[userId]).forEach(recordId => {
+                            expenses.push(rawData[userId][recordId]);
+                        });
+                    });
+                } else {
+                    expenses = [];
+                }
+                applyFilters();
+            } catch (err) {
+                console.error("Cloud synchronization stream failed: ", err);
+            }
+        }
+
+        window.changeBudget = async function() {
             let newBudget = prompt("Enter new Total Budget (PKR):", BUDGET);
             if (newBudget !== null && !isNaN(newBudget) && newBudget.trim() !== "") {
                 BUDGET = parseFloat(newBudget);
-                localStorage.setItem('idc_local_budget_' + currentAdminToken, BUDGET);
+                await set(ref(db, 'idc_budgets/' + currentAdminToken), BUDGET);
                 totalBudgetEl.innerText = `PKR ${BUDGET.toLocaleString()}`;
                 applyFilters();
             }
         };
         document.getElementById('btnEditBudgetTrigger').onclick = window.changeBudget;
-
-        btnSubmit.addEventListener('click', () => {
+        btnSubmit.addEventListener('click', async () => {
             const date = document.getElementById('exp-date').value;
             const category = document.getElementById('exp-category').value;
             const desc = document.getElementById('exp-desc').value;
@@ -653,30 +701,33 @@
                 return alert("Tamam fields complete filled hona lazmi hain.");
             }
 
-            if (editTargetDocId === -1) {
-                let newRecord = {
-                    docId: Date.now().toString(),
-                    date, category, desc: desc.trim(), amount, ownerUid: currentAdminToken,
-                    selectedDay: sheetDay.value, selectedMonth: sheetMonth.value, selectedYear: sheetYear.value
-                };
-                expenses.push(newRecord);
-            } else {
-                let target = expenses.find(r => r.docId === editTargetDocId);
-                if(target) {
-                    target.date = date; target.category = category; target.desc = desc.trim(); target.amount = amount;
-                    target.selectedDay = sheetDay.value; target.selectedMonth = sheetMonth.value; target.selectedYear = sheetYear.value;
-                }
-                editTargetDocId = -1;
-                formTitle.innerText = "Add New Expense Row";
-                btnSubmit.innerText = "Add Entry";
-                btnSubmit.style.backgroundColor = "#002060";
-            }
+            let targetId = editTargetDocId === -1 ? Date.now().toString() : editTargetDocId;
+            let recordData = {
+                docId: targetId,
+                date, category, desc: desc.trim(), amount, ownerUid: currentAdminToken,
+                selectedDay: sheetDay.value, selectedMonth: sheetMonth.value, selectedYear: sheetYear.value
+            };
 
-            localStorage.setItem('idc_local_expenses', JSON.stringify(expenses));
-            form.reset();
-            document.getElementById('exp-date').value = new Date().toISOString().split('T')[0];
-            applyFilters();
+            try {
+                // Online database node par write logic pipeline
+                await set(ref(db, `idc_expenses/${currentAdminToken}/${targetId}`), recordData);
+                
+                if (editTargetDocId !== -1) {
+                    editTargetDocId = -1;
+                    formTitle.innerText = "Add New Expense Row";
+                    btnSubmit.innerText = "Add Entry";
+                    btnSubmit.style.backgroundColor = "#002060";
+                }
+
+                form.reset();
+                // Ensure browser split architecture context binding works correctly
+                document.getElementById('exp-date').value = new Date().toISOString().split('T')[0];
+                await fetchCloudData();
+            } catch (err) {
+                alert("Data save karne mein masala aya: " + err.message);
+            }
         });
+
         window.applyFilters = function() {
             const activeDay = sheetDay.value;
             const activeMonth = sheetMonth.value;
@@ -689,7 +740,7 @@
             let totalRunningSum = 0;
             let displayIndex = 1;
 
-            // 1. Calculate active totals logic counters
+            // 1. Calculate active totals counters
             expenses.forEach(item => {
                 if(item.selectedDay === activeDay && item.selectedMonth === activeMonth && item.selectedYear === activeYear && item.ownerUid === currentAdminToken) {
                     totalRunningSum += item.amount;
@@ -723,7 +774,7 @@
                 displayIndex++;
             });
 
-            // Refresh metric counters metrics views layers
+            // Refresh metric counters views layers
             let remaining = BUDGET - totalRunningSum;
             totalExpenseEl.innerText = `PKR ${totalRunningSum.toLocaleString()}`;
             remainingBudgetEl.innerText = `PKR ${remaining.toLocaleString()}`;
@@ -736,14 +787,18 @@
             }
             attachDynamicRowListeners();
         };
+
         function attachDynamicRowListeners() {
             document.querySelectorAll('.btn-delete').forEach(btn => {
-                btn.onclick = (e) => {
+                btn.onclick = async (e) => {
                     const docId = e.target.dataset.id;
-                    if (confirm("Are you sure you want to delete this expense row?")) {
-                        expenses = expenses.filter(r => r.docId !== docId);
-                        localStorage.setItem('idc_local_expenses', JSON.stringify(expenses));
-                        applyFilters();
+                    if (confirm("Are you sure you want to delete this expense row from cloud storage?")) {
+                        try {
+                            await remove(ref(db, `idc_expenses/${currentAdminToken}/${docId}`));
+                            await fetchCloudData();
+                        } catch (err) {
+                            alert("Delete fail hoa: " + err.message);
+                        }
                     }
                 };
             });
@@ -768,17 +823,26 @@
             });
         }
 
-        window.clearAllData = function() {
+        window.clearAllData = async function() {
             const activeDay = sheetDay.value;
             const activeMonth = sheetMonth.value;
             const activeYear = sheetYear.value;
-            if (confirm("⚠️ WARNING: Kya aap waqai is selected date ka data clear karna chahte hain?")) {
-                expenses = expenses.filter(item => !(item.selectedDay === activeDay && item.selectedMonth === activeMonth && item.selectedYear === activeYear && item.ownerUid === currentAdminToken));
-                localStorage.setItem('idc_local_expenses', JSON.stringify(expenses));
-                applyFilters();
+            if (confirm("⚠️ WARNING: Kya aap waqai is selected date ka data online database se permanently clear karna chahte hain?")) {
+                try {
+                    // Filter targets nodes to remove from cloud structural layer
+                    let targetsToRemove = expenses.filter(item => item.selectedDay === activeDay && item.selectedMonth === activeMonth && item.selectedYear === activeYear && item.ownerUid === currentAdminToken);
+                    
+                    for (let item of targetsToRemove) {
+                        await remove(ref(db, `idc_expenses/${currentAdminToken}/${item.docId}`));
+                    }
+                    await fetchCloudData();
+                } catch (err) {
+                    alert("Clear fail hoa: " + err.message);
+                }
             }
         };
         document.getElementById('btnFlushData').onclick = window.clearAllData;
+
         window.exportToExcel = function() {
             const activeDay = sheetDay.value; 
             const activeMonth = sheetMonth.value; 
@@ -803,6 +867,33 @@
             document.body.removeChild(link);
         };
         document.getElementById('btnExportToExcel').onclick = window.exportToExcel;
+
+        // 🖼️ DIRECT VISUAL RENDERING IMAGE DOWNLOAD CAPTURE ENGINE
+        window.exportToJPG = function() {
+            const activeDay = sheetDay.value; 
+            const activeMonth = sheetMonth.value; 
+            const activeYear = sheetYear.value;
+            const workspaceElement = document.getElementById('appWorkspace');
+            
+            if (!workspaceElement) return alert("System view context error!");
+
+            html2canvas(workspaceElement, {
+                scale: 2, // Enhances text crispness and quality
+                useCORS: true,
+                backgroundColor: "#ffffff"
+            }).then(canvas => {
+                const imageUri = canvas.toDataURL("image/jpeg", 0.9);
+                const downloadAnchor = document.createElement("a");
+                downloadAnchor.href = imageUri;
+                downloadAnchor.download = `IDC_G8_Report_${activeDay}_${activeMonth}_${activeYear}.jpg`;
+                document.body.appendChild(downloadAnchor);
+                downloadAnchor.click();
+                document.body.removeChild(downloadAnchor);
+            }).catch(err => {
+                alert("Visual image export fail hui: " + err.message);
+            });
+        };
+        document.getElementById('btnExportToJPG').onclick = window.exportToJPG;
         document.getElementById('btnPrintReport').onclick = () => window.print();
 
         sheetDay.addEventListener('change', window.applyFilters);
