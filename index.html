@@ -747,19 +747,22 @@
 
                 attachDynamicRowListeners();
             };
-            function attachDynamicRowListeners() {
-                document.querySelectorAll('.btn-delete').forEach(b => {
-                    b.onclick = (e) => {
+                        function attachDynamicRowListeners() {
+                document.querySelectorAll('.btn-delete').forEach(function(b) {
+                    b.onclick = function(e) {
                         if(confirm("Delete entry?")) {
-                            db.ref('idc_expenses/' + currentAdminToken + '/' + e.target.dataset.id).remove().then(() => fetchCloudData());
+                            db.ref('idc_expenses/' + currentAdminToken + '/' + e.target.dataset.id).remove().then(function() {
+                                fetchCloudData();
+                            }).catch(function(err) { alert(err.message); });
                         }
                     };
                 });
                 
-                document.querySelectorAll('.btn-action-edit').forEach(b => {
-                    b.onclick = (e) => {
-                        let t = expenses.find(r => r.docId === e.target.dataset.id);
-                        if(!t) return; editTargetDocId = t.docId;
+                document.querySelectorAll('.btn-action-edit').forEach(function(b) {
+                    b.onclick = function(e) {
+                        var t = expenses.find(function(r) { return r.docId === e.target.dataset.id; });
+                        if (!t) return;
+                        editTargetDocId = t.docId;
                         document.getElementById('exp-date').value = t.date;
                         document.getElementById('exp-category').value = t.category;
                         document.getElementById('exp-desc').value = t.desc;
@@ -773,19 +776,29 @@
 
             document.getElementById('btnFlushData').onclick = function() {
                 if(confirm("Clear date data?")) {
-                    let targets = expenses.filter(item => item.selectedDay === dSel.value && item.selectedMonth === mSel.value && item.selectedYear === ySel.value && item.ownerUid === currentAdminToken);
-                    let ps = targets.map(item => db.ref('idc_expenses/' + currentAdminToken + '/' + item.docId).remove());
-                    Promise.all(ps).then(() => fetchCloudData());
+                    var targetsToRemove = expenses.filter(function(item) {
+                        return item.selectedDay === dSel.value && item.selectedMonth === mSel.value && item.selectedYear === ySel.value && item.ownerUid === currentAdminToken;
+                    });
+                    var promises = targetsToRemove.map(function(item) {
+                        return db.ref('idc_expenses/' + currentAdminToken + '/' + item.docId).remove();
+                    });
+                    Promise.all(promises).then(function() {
+                        fetchCloudData();
+                    }).catch(function(err) { alert(err.message); });
                 }
             };
 
             document.getElementById('btnExportToExcel').onclick = function() {
-                let targets = expenses.filter(item => item.selectedDay === dSel.value && item.selectedMonth === mSel.value && item.selectedYear === ySel.value && item.ownerUid === currentAdminToken);
-                if(targets.length===0) return alert("Sheet khali hai!");
-                let csv = "\uFEFFSr. No.,Date,Category,Description,Amount\n";
-                targets.forEach((item, i) => { csv += `${i+1},${item.date},${item.category},"${item.desc}",${item.amount}\n`; });
-                let b = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-                let l = document.createElement("a"); 
+                var targets = expenses.filter(function(item) {
+                    return item.selectedDay === dSel.value && item.selectedMonth === mSel.value && item.selectedYear === ySel.value && item.ownerUid === currentAdminToken;
+                });
+                if(targets.length === 0) return alert("Sheet khali hai!");
+                var csv = "\uFEFFSr. No.,Date,Category,Description,Amount\n";
+                targets.forEach(function(item, i) {
+                    csv += (i + 1) + "," + item.date + "," + item.category + ',"' + item.desc + '",' + item.amount + "\n";
+                });
+                var b = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                var l = document.createElement("a"); 
                 l.href = URL.createObjectURL(b); 
                 l.download = "Report.csv"; 
                 document.body.appendChild(l);
@@ -794,8 +807,8 @@
             };
 
             document.getElementById('btnExportToJPG').onclick = function() {
-                html2canvas(appWorkspace, { scale: 2, useCORS: true, backgroundColor: "#ffffff" }).then(canvas => {
-                    let l = document.createElement("a"); 
+                html2canvas(appWorkspace, { scale: 2, useCORS: true, backgroundColor: "#ffffff" }).then(function(canvas) {
+                    var l = document.createElement("a"); 
                     l.href = canvas.toDataURL("image/jpeg", 0.9); 
                     l.download = "Report.jpg"; 
                     document.body.appendChild(l);
@@ -804,9 +817,10 @@
                 });
             };
 
-            document.getElementById('btnPrintReport').onclick = () => window.print();
+            document.getElementById('btnPrintReport').onclick = function() { window.print(); };
             dSel.onchange = applyFilters; mSel.onchange = applyFilters; ySel.onchange = applyFilters; categoryFilter.onchange = applyFilters; searchFilter.oninput = applyFilters;
         }
     </script>
 </body>
 </html>
+
