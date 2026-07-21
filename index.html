@@ -588,203 +588,167 @@
             Designed by <span class="portal-footer-author">M. Moazzam</span> | © 2026 All Rights Reserved
         </footer>
     </div>
- <!-- REAL-TIME ONLINE CLOUD DATABASE CORE SCRIPTS ENGINE -->
-    <script type="module">
-        // 👑 PERMANENT CORS FIX: USING SECURE DIRECT FIREBASE BUNDLE CONTEXT
-        import { initializeApp } from "https://gstatic.com";
-        
-        // Initializing native compat interface pointers
-        const firebaseConfig = {
-            databaseURL: "https://firebaseio.com"
-        };
+        <!-- Explicit network configurations added to bypass browser restrictions -->
+    <script src="https://cloudflare.com"></script>
+    <script src="https://gstatic.com"></script>
+    <script src="https://gstatic.com"></script>
 
-        // Initialize Firebase Global Layer
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        const db = firebase.database();
+    <script>
+        window.onload = function() {
+            const dSel = document.getElementById('sheet-day');
+            for(let i=1; i<=31; i++) { dSel.options[dSel.options.length] = new Option(i, i); }
+            const mSel = document.getElementById('sheet-month');
+            const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            months.forEach(m => { mSel.options[mSel.options.length] = new Option(m, m); });
+            const ySel = document.getElementById('sheet-year');
+            for(let i=2024; i<=2030; i++) { ySel.options[ySel.options.length] = new Option(i, i); }
 
-        // System Administration Context Core Secrets Settings
-        let MY_SECRET_NAME = "Moazzam";        
-        let MY_SECRET_PASS = "Moazzam1451";     
+            if (!firebase.apps.length) { firebase.initializeApp({ databaseURL: "https://firebaseio.com" }); }
+            const db = firebase.database();
 
-        let isAuthenticationLoginState = true;
+            let currentAdminToken = sessionStorage.getItem('idc_active_local_admin') || "Staff";
+            let expenses = []; let BUDGET = 0; let editTargetDocId = -1;
 
-        const lblAuthState = document.getElementById('lblAuthState');
-        const lblAuthDesc = document.getElementById('lblAuthDesc');
-        const txtAuthUser = document.getElementById('txtAuthUser');
-        const txtAuthPassword = document.getElementById('txtAuthPassword');
-        const btnSubmitAuth = document.getElementById('btnSubmitAuth');
-        const btnShiftState = document.getElementById('btnShiftState');
-        const superAdminPanel = document.getElementById('superAdminPanel');
-        const userTableBody = document.getElementById('userTableBody');
-        const btnSuperLogout = document.getElementById('btnSuperLogout');
-        const btnChangeSuperPass = document.getElementById('btnChangeSuperPass');
+            const appWorkspace = document.getElementById('appWorkspace');
+            const lblActiveAdminEmail = document.getElementById('lblActiveAdminEmail');
+            const btnSignOutSession = document.getElementById('btnSignOutSession');
+            const form = document.getElementById('expense-form');
+            const formTitle = document.getElementById('form-title');
+            const btnSubmit = document.getElementById('btn-submit');
+            const tableBody = document.getElementById('table-body');
+            const totalBudgetEl = document.getElementById('total-budget');
+            const totalExpenseEl = document.getElementById('total-expense');
+            const remainingBudgetEl = document.getElementById('remaining-budget');
+            const grandTotalValEl = document.getElementById('grand-total-val');
+            const remainingCardBlock = document.getElementById('remaining-card-block');
+            const searchFilter = document.getElementById('search-filter');
+            const categoryFilter = document.getElementById('category-filter');
 
-        function setLoginInterface() {
-            isAuthenticationLoginState = true;
-            lblAuthState.innerText = "Admin Live Login";
-            lblAuthDesc.innerText = "Apna unique admin credentials enter kar ke securely online connect hon.";
-            btnSubmitAuth.innerText = "Secure Login";
-            btnShiftState.innerText = "Naya Admin Account Create Karein (Register)";
-            btnShiftState.style.display = "block";
-            superAdminPanel.style.display = "none";
-            txtAuthUser.style.display = "block";
-            txtAuthPassword.style.display = "block";
-            btnSubmitAuth.style.display = "block";
-        }
-        setLoginInterface();
-
-        btnShiftState.addEventListener('click', () => {
-            isAuthenticationLoginState = !isAuthenticationLoginState;
-            superAdminPanel.style.display = "none";
-            if(isAuthenticationLoginState) {
-                setLoginInterface();
+            if(!sessionStorage.getItem('idc_active_local_admin')) {
+                window.location.href = "login.html";
             } else {
-                lblAuthState.innerText = "Register New Live Admin";
-                lblAuthDesc.innerText = "Apna alag private account banane ke liye details enter karein.";
-                btnSubmitAuth.innerText = "Create Account";
-                btnShiftState.innerText = "Pehle se account majood hai? Login Karein";
+                lblActiveAdminEmail.innerText = currentAdminToken.toUpperCase();
+                appWorkspace.style.display = 'block';
+                dSel.value = new Date().getDate().toString();
+                mSel.value = months[new Date().getMonth()];
+                ySel.value = new Date().getFullYear().toString();
+                document.getElementById('exp-date').value = new Date().toISOString().split('T')[0];
+                fetchCloudData();
             }
-        });
 
-        async function renderUserManagementTable() {
-            userTableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#94a3b8; font-style:italic;">Loading live accounts...</td></tr>`;
-            try {
-                const snapshot = await db.ref('idc_users').once('value');
-                userTableBody.innerHTML = "";
-                let admins = snapshot.exists() ? snapshot.val() : {};
-                let staffUsers = Object.keys(admins).filter(user => user.toLowerCase() !== MY_SECRET_NAME.toLowerCase());
+            btnSignOutSession.addEventListener('click', () => { sessionStorage.removeItem('idc_active_local_admin'); window.location.href = "login.html"; });
 
-                if(staffUsers.length === 0) {
-                    userTableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#94a3b8; font-style:italic;">Koi staff account register nahi hai.</td></tr>`;
-                    return;
+            function fetchCloudData() {
+                db.ref('idc_budgets/' + currentAdminToken).once('value').then(snap => {
+                    BUDGET = snap.exists() ? parseFloat(snap.val()) : 0;
+                    totalBudgetEl.innerText = 'PKR ' + BUDGET.toLocaleString();
+                    return db.ref('idc_expenses').once('value');
+                }).then(snap => {
+                    expenses = [];
+                    if (snap.exists()) {
+                        const data = snap.val();
+                        Object.keys(data).forEach(u => { Object.keys(data[u]).forEach(r => { expenses.push(data[u][r]); }); });
+                    }
+                    applyFilters();
+                }).catch(err => console.error(err));
+            }
+
+            document.getElementById('btnEditBudgetTrigger').onclick = function() {
+                let nb = prompt("Total Budget (PKR):", BUDGET);
+                if (nb && !isNaN(nb)) {
+                    BUDGET = parseFloat(nb);
+                    db.ref('idc_budgets/' + currentAdminToken).set(BUDGET).then(() => { totalBudgetEl.innerText = 'PKR ' + BUDGET.toLocaleString(); applyFilters(); });
                 }
+            };
 
-                staffUsers.forEach(user => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td style="font-weight:600; color:#334155;">${user}</td>
-                        <td style="color:#0d9488; font-family:monospace; font-weight:bold;">${admins[user]}</td>
-                        <td style="text-align: center;">
-                            <div style="display:flex; gap:5px; justify-content:center;">
-                                <button class="btn-panel-edit" data-username="${user}" style="background-color:#d97706; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px; font-weight:bold;">Edit Pass</button>
-                                <button class="btn-panel-delete" data-username="${user}" style="background-color:#dc2626; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px; font-weight:bold;">Delete</button>
-                            </div>
-                        </td>
-                    `;
-                    userTableBody.appendChild(tr);
+            btnSubmit.onclick = function() {
+                const date = document.getElementById('exp-date').value;
+                const category = document.getElementById('exp-category').value;
+                const desc = document.getElementById('exp-desc').value;
+                const amount = parseFloat(document.getElementById('exp-amount').value);
+
+                if(!date || !category || !desc.trim() || isNaN(amount)) return alert("Fields fill karein.");
+
+                let tid = editTargetDocId === -1 ? Date.now().toString() : editTargetDocId;
+                let rData = { docId: tid, date, category, desc: desc.trim(), amount, ownerUid: currentAdminToken, selectedDay: dSel.value, selectedMonth: mSel.value, selectedYear: ySel.value };
+
+                db.ref('idc_expenses/' + currentAdminToken + '/' + tid).set(rData).then(() => {
+                    if (editTargetDocId !== -1) { editTargetDocId = -1; formTitle.innerText = "Add New Expense Row"; btnSubmit.innerText = "Add Entry"; btnSubmit.style.backgroundColor = "#002060"; }
+                    form.reset(); document.getElementById('exp-date').value = new Date().toISOString().split('T')[0];
+                    fetchCloudData();
+                });
+            };
+
+            window.applyFilters = function() {
+                tableBody.innerHTML = '';
+                let fTotal = 0; let rSum = 0; let idx = 1;
+
+                expenses.forEach(item => { if(item.selectedDay === dSel.value && item.selectedMonth === mSel.value && item.selectedYear === ySel.value && item.ownerUid === currentAdminToken) { rSum += item.amount; } });
+
+                const fSet = expenses
+                    .filter(item => item.selectedDay === dSel.value && item.selectedMonth === mSel.value && item.selectedYear === ySel.value && item.ownerUid === currentAdminToken)
+                    .filter(item => categoryFilter.value === 'ALL' || item.category === categoryFilter.value)
+                    .filter(item => item.desc.toLowerCase().includes(searchFilter.value.toLowerCase().trim()))
+                    .sort((a,b) => new Date(a.date) - new Date(b.date));
+
+                fSet.forEach(item => {
+                    fTotal += item.amount;
+                    let r = document.createElement('tr');
+                    r.innerHTML = `<td style="text-align:center;">${idx}</td><td>${item.date}</td><td>${item.category}</td><td>${item.desc}</td><td style="text-align:right;">${item.amount.toLocaleString()}</td><td style="text-align:center;"><button class="btn-action-edit" data-id="${item.docId}" style="background-color:#d97706; color:white; border:none; padding:3px 6px; border-radius:4px; margin-right:5px;">Edit</button><button class="btn-delete" data-id="${item.docId}" style="background-color:#dc2626; color:white; border:none; padding:3px 6px; border-radius:4px;">Delete</button></td>`;
+                    tableBody.appendChild(r); idx++;
                 });
 
-                document.querySelectorAll('.btn-panel-edit').forEach(btn => {
-                    btn.onclick = async function(e) {
-                        const targetUser = e.target.dataset.username;
-                        const oldPassword = admins[targetUser];
-                        const newPassword = prompt(`🔑 Change Password for '${targetUser}':\nPurana Password: ${oldPassword}\n\nNaya Password input karein:`, oldPassword);
-                        
-                        if (newPassword === null) return; 
-                        if (newPassword.trim() === "") return alert("Password khali nahi ho sakta!");
+                let rem = BUDGET - rSum;
+                totalExpenseEl.innerText = 'PKR ' + rSum.toLocaleString();
+                remainingBudgetEl.innerText = 'PKR ' + rem.toLocaleString();
+                grandTotalValEl.innerText = fTotal.toLocaleString();
+                if (rem < 0) remainingCardBlock.classList.add('budget-danger'); else remainingCardBlock.classList.remove('budget-danger');
 
-                        await db.ref('idc_users/' + targetUser).set(newPassword.trim());
-                        alert(`✅ Done! Account '${targetUser}' ka password successfully update ho gaya.`);
-                        renderUserManagementTable(); 
-                    };
+                document.querySelectorAll('.btn-delete').forEach(b => { b.onclick = (e) => { if(confirm("Delete entry?")) { db.ref('idc_expenses/' + currentAdminToken + '/' + e.target.dataset.id).remove().then(() => fetchCloudData()); } }; });
+                document.querySelectorAll('.btn-action-edit').forEach(b => { b.onclick = (e) => {
+                    let t = expenses.find(r => r.docId === e.target.dataset.id);
+                    if(!t) return; editTargetDocId = t.docId;
+                    document.getElementById('exp-date').value = t.date; document.getElementById('exp-category').value = t.category; document.getElementById('exp-desc').value = t.desc; document.getElementById('exp-amount').value = t.amount;
+                    formTitle.innerText = "Edit Selected Expense Row"; btnSubmit.innerText = "Update Row"; btnSubmit.style.backgroundColor = "#d97706";
+                }; });
+            };
+
+            document.getElementById('btnFlushData').onclick = function() {
+                if(confirm("Clear date data?")) {
+                    let targets = expenses.filter(item => item.selectedDay === dSel.value && item.selectedMonth === mSel.value && item.selectedYear === ySel.value && item.ownerUid === currentAdminToken);
+                    let ps = targets.map(item => db.ref('idc_expenses/' + currentAdminToken + '/' + item.docId).remove());
+                    Promise.all(ps).then(() => fetchCloudData());
+                }
+            };
+
+            document.getElementById('btnExportToExcel').onclick = function() {
+                let targets = expenses.filter(item => item.selectedDay === dSel.value && item.selectedMonth === mSel.value && item.selectedYear === ySel.value && item.ownerUid === currentAdminToken);
+                if(targets.length===0) return alert("Khali hai!");
+                let csv = "\uFEFFSr. No.,Date,Category,Description,Amount\n";
+                targets.forEach((item, i) => { csv += `${i+1},${item.date},${item.category},"${item.desc}",${item.amount}\n`; });
+                let b = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                let l = document.createElement("a"); 
+                l.href = URL.createObjectURL(b); 
+                l.download = "Report.csv"; 
+                document.body.appendChild(l);
+                l.click();
+                document.body.removeChild(l);
+            };
+
+            document.getElementById('btnExportToJPG').onclick = function() {
+                html2canvas(appWorkspace, { scale: 2, useCORS: true, backgroundColor: "#ffffff" }).then(canvas => {
+                    let l = document.createElement("a"); 
+                    l.href = canvas.toDataURL("image/jpeg", 0.9); 
+                    l.download = "Report.jpg"; 
+                    document.body.appendChild(l);
+                    l.click();
+                    document.body.removeChild(l);
                 });
+            };
 
-                document.querySelectorAll('.btn-panel-delete').forEach(btn => {
-                    btn.onclick = async function(e) {
-                        const targetToDelete = e.target.dataset.username;
-                        if(confirm(`⚠️ WARNING:\nKya aap account '${targetToDelete}' aur us ka poora cloud expense data permanently delete karna chahte hain?`)) {
-                            await db.ref('idc_users/' + targetToDelete).remove();
-                            await db.ref('idc_expenses/' + targetToDelete).remove();
-                            alert(`🗑️ Account '${targetToDelete}' and all records removed from cloud database.`);
-                            renderUserManagementTable();
-                        }
-                    };
-                });
-            } catch (err) {
-                alert("Cloud read error: " + err.message);
-            }
-        }
-
-        btnSuperLogout.onclick = function() {
-            sessionStorage.removeItem('idc_active_local_admin');
-            setLoginInterface(); 
-            alert("Super Admin Identity session wiped out successfully.");
+            document.getElementById('btnPrintReport').onclick = () => window.print();
+            dSel.onchange = applyFilters; mSel.onchange = applyFilters; ySel.onchange = applyFilters; categoryFilter.onchange = applyFilters; searchFilter.oninput = applyFilters;
         };
-
-        btnChangeSuperPass.onclick = async function() {
-            const promptNewPass = prompt(`🔑 Super Admin Password Engine:\n\nActive Owner Username: ${MY_SECRET_NAME}\nActive Owner Password: ${MY_SECRET_PASS}\n\nNaya Secret Password type karein:`, MY_SECRET_PASS);
-            if (promptNewPass === null) return;
-            if (promptNewPass.trim() === "") return alert("Password khali nahi rakha ja sakta!");
-
-            MY_SECRET_PASS = promptNewPass.trim();
-            await db.ref('idc_users/' + MY_SECRET_NAME).set(MY_SECRET_PASS);
-            alert(`✅ Success!\nSuperadmin password successfully updated.`);
-        };
-
-        btnSubmitAuth.addEventListener('click', async () => {
-            const inputUser = txtAuthUser.value.trim(); 
-            const inputPass = txtAuthPassword.value;
-
-            if(!inputUser || !inputPass) {
-                return alert("Username aur Password enter karna lazmi hai!");
-            }
-
-            try {
-                const snapshot = await db.ref('idc_users').once('value');
-                let admins = snapshot.exists() ? snapshot.val() : {};
-                
-                if (!admins[MY_SECRET_NAME]) {
-                    admins[MY_SECRET_NAME] = MY_SECRET_PASS;
-                    await db.ref('idc_users/' + MY_SECRET_NAME).set(MY_SECRET_PASS);
-                }
-
-                if(isAuthenticationLoginState) {
-                    if(inputUser.toLowerCase() === MY_SECRET_NAME.toLowerCase() && inputPass === admins[MY_SECRET_NAME]) {
-                        alert("👑 Welcome Super Admin Moazzam! Access Control Panel Activated.");
-                        lblAuthState.innerText = "Master Control Dashboard";
-                        lblAuthDesc.innerText = "Yahan se aap kisi bhi account ka password dekh, badal ya account remove kar sakte hain.";
-                        btnShiftState.style.display = "none";
-                        txtAuthUser.style.display = "none";
-                        txtAuthPassword.style.display = "none";
-                        btnSubmitAuth.style.display = "none";
-                        superAdminPanel.style.display = "block";
-                        renderUserManagementTable();
-                    } else if(admins[inputUser] && admins[inputUser] === inputPass) {
-                        alert("Authentication successful! Welcome to IDC Ledger.");
-                        sessionStorage.setItem('idc_active_local_admin', inputUser);
-                        window.location.href = "index.html"; 
-                    } else {
-                        alert("Ghalat Username ya Password! Please dobara check karein.");
-                    }
-                } else {
-                    if(inputUser.toLowerCase() === MY_SECRET_NAME.toLowerCase()) {
-                        return alert("Yeh name owner control ke liye reserved hai!");
-                    }
-                    if(admins[inputUser]) {
-                        return alert("Yeh admin username pehle se register hai!");
-                    }
-
-                    await db.ref('idc_users/' + inputUser).set(inputPass);
-                    alert("Naya Admin Account cloud par kamyabi se ban gaya hai!");
-                    txtAuthUser.value = '';
-                    txtAuthPassword.value = '';
-                    setLoginInterface();
-                }
-            } catch (err) {
-                alert("Database operations failed: " + err.message);
-            }
-        });
-
-        function handleKeyboardEnter(event) {
-            if (event.key === "Enter") {
-                event.preventDefault();
-                btnSubmitAuth.click();
-            }
-        }
-        txtAuthUser.addEventListener("keydown", handleKeyboardEnter);
-        txtAuthPassword.addEventListener("keydown", handleKeyboardEnter);
     </script>
 </body>
 </html>
