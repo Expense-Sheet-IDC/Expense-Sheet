@@ -182,7 +182,6 @@
                     <!-- Javascript entries rows stream here -->
                 </tbody>
             </table>
-
             <!-- 🌟 PROPER SEEDHI ALIGNMENT: Dono buttons footer se theek upar inline fix -->
             <div style="display: flex; gap: 10px; justify-content: space-between; align-items: center; margin-top: 25px; width: 100%;">
                 <button id="btnChangeSuperPass" style="flex: 1; background-color: #d97706; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; text-align: center; white-space: nowrap;">🔑 Change My Password</button>
@@ -195,10 +194,22 @@
             Designed by M. Moazzam | © 2026 All Rights Reserved
         </div>
     </div>
-       <!-- ================================================================= -->
-    <!-- UPDATED JAVASCRIPT AUTH ENGINE WITH EYE TOGGLE & AUTO CLEANUP      -->
-    <!-- ================================================================= -->
-    <script>
+
+    <!-- REAL-TIME ONLINE CLOUD DATABASE CORE SCRIPTS ENGINE -->
+    <script type="module">
+        import { initializeApp } from "https://gstatic.com";
+        import { getDatabase, ref, set, get, child, remove } from "https://gstatic.com";
+
+        // Firebase Project Configuration Credentials
+        const firebaseConfig = {
+            databaseURL: "https://firebaseio.com"
+        };
+
+        // Initialize Firebase Web Core Modules
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // System Administration Context Core Secrets Settings
         let MY_SECRET_NAME = "Moazzam";        
         let MY_SECRET_PASS = "Moazzam1451";     
 
@@ -215,6 +226,7 @@
         const btnSuperLogout = document.getElementById('btnSuperLogout');
         const btnChangeSuperPass = document.getElementById('btnChangeSuperPass');
 
+        // Dynamic State UI Interface Control
         function setLoginInterface() {
             isAuthenticationLoginState = true;
             lblAuthState.innerText = "Admin Live Login";
@@ -223,164 +235,11 @@
             btnShiftState.innerText = "Naya Admin Account Create Karein (Register)";
             btnShiftState.style.display = "block";
             superAdminPanel.style.display = "none";
-            
-            // ✅ BOXES CLEANUP CONFIGURATION: Enforces total empty text nodes on default switch
-            txtAuthUser.value = "";
-            txtAuthPassword.value = "";
-            
             txtAuthUser.style.display = "block";
             txtAuthPassword.style.display = "block";
             btnSubmitAuth.style.display = "block";
-            
-            // If eye button wrap exists, restore it to visible layout block
-            const eyeWrap = document.getElementById('eyeToggleWrap');
-            if(eyeWrap) eyeWrap.style.display = "flex";
         }
-        // 👑 SUPERADMIN CONTROL INTERACTOR: LIVE SECURE LOGOUT WITH TOTAL STORAGE WIPE
-        btnSuperLogout.onclick = function() {
-            sessionStorage.removeItem('idc_active_local_admin');
-            
-            // ✅ IMMEDIATE WIPE: Superadmin ka bacha hua data boxes se bilkul saaf (khatam) karna
-            txtAuthUser.value = "";
-            txtAuthPassword.value = "";
-            
-            setLoginInterface(); 
-            alert("Super Admin Identity session wiped out successfully. Boxes cleared.");
-        };
-
-        // 👁️ DYNAMIC PASSWORD EYE TOGGLE UTILITY IMPLEMENTATION
-        window.togglePasswordVisibilityDisplay = function() {
-            if (txtAuthPassword.type === "password") {
-                txtAuthPassword.type = "text";
-                document.getElementById('eyeIconEmblem').innerText = "🙈 Hide";
-            } else {
-                txtAuthPassword.type = "password";
-                document.getElementById('eyeIconEmblem').innerText = "👁️ Show";
-            }
-        };
-
-        btnChangeSuperPass.onclick = function() {
-            const promptNewPass = prompt(`🔑 Super Admin Password Engine:\n\nActive Owner Username: ${MY_SECRET_NAME}\nActive Owner Password: ${MY_SECRET_PASS}\n\nNaya Secret Password type karein:`, MY_SECRET_PASS);
-            if (promptNewPass === null) return;
-            if (promptNewPass.trim() === "") return alert("Password khali nahi rakha ja sakta!");
-
-            MY_SECRET_PASS = promptNewPass.trim();
-            localStorage.setItem('idc_super_pass', MY_SECRET_PASS);
-            alert(`✅ Success!\nSuperadmin password successfully updated to: ${MY_SECRET_PASS}`);
-        };
-
-        // 📋 OFFLINE CONTROL BACKUP RENDERING ENGINE
-        function renderUserManagementTable() {
-            userTableBody.innerHTML = "";
-            let admins = JSON.parse(localStorage.getItem('idc_local_admins')) || {};
-            let staffUsers = Object.keys(admins).filter(user => user.toLowerCase() !== MY_SECRET_NAME.toLowerCase());
-
-            if(staffUsers.length === 0) {
-                userTableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#94a3b8; font-style:italic;">Koi staff account register nahi hai.</td></tr>`;
-                return;
-            }
-
-            staffUsers.forEach(user => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td style="font-weight:600; color:#334155;">${user}</td>
-                    <td style="color:#0d9488; font-family:monospace; font-weight:bold;">${admins[user]}</td>
-                    <td style="text-align: center;">
-                        <div style="display:flex; gap:5px; justify-content:center;">
-                            <button class="btn-panel-edit" data-username="${user}" style="background-color:#d97706; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px; font-weight:bold;">Edit Pass</button>
-                            <button class="btn-panel-delete" data-username="${user}" style="background-color:#dc2626; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px; font-weight:bold;">Delete</button>
-                        </div>
-                    </td>
-                `;
-                userTableBody.appendChild(tr);
-            });
-
-            // EDIT STAFF ACCOUNT CONTROL
-            document.querySelectorAll('.btn-panel-edit').forEach(btn => {
-                btn.onclick = function(e) {
-                    const targetUser = e.target.dataset.username;
-                    const oldPassword = admins[targetUser];
-                    const newPassword = prompt(`🔑 Change Password for '${targetUser}':\nPurana Password: ${oldPassword}\n\nNaya Password input karein:`, oldPassword);
-                    
-                    if (newPassword === null) return; 
-                    if (newPassword.trim() === "") return alert("Password khali nahi ho sakta!");
-
-                    admins[targetUser] = newPassword.trim();
-                    localStorage.setItem('idc_local_admins', JSON.stringify(admins));
-                    alert(`✅ Done! Account '${targetUser}' ka password successfully update ho gaya.`);
-                    renderUserManagementTable(); 
-                };
-            });
-
-            // DELETE STAFF ACCOUNT CONTROL
-            document.querySelectorAll('.btn-panel-delete').forEach(btn => {
-                btn.onclick = function(e) {
-                    const targetToDelete = e.target.dataset.username;
-                    if(confirm(`⚠️ WARNING:\nKya aap account '${targetToDelete}' aur us ka poora expense table records permanently delete karna chahte hain?`)) {
-                        delete admins[targetToDelete];
-                        localStorage.setItem('idc_local_admins', JSON.stringify(admins));
-
-                        let currentExpenses = JSON.parse(localStorage.getItem('idc_local_expenses')) || [];
-                        let remainingExpenses = currentExpenses.filter(item => item.ownerUid.toLowerCase() !== targetToDelete.toLowerCase());
-                        localStorage.setItem('idc_local_expenses', JSON.stringify(remainingExpenses));
-
-                        alert(`🗑️ Account '${targetToDelete}' has been deleted.`);
-                        renderUserManagementTable();
-                    }
-                };
-            });
-        }
-        // GATEWAY SUBMISSION GATE CHECK WITH IMMEDIATE AUTO WIPE ON ERROR
-        btnSubmitAuth.addEventListener('click', () => {
-            const inputUser = txtAuthUser.value.trim(); 
-            const inputPass = txtAuthPassword.value;
-            let admins = JSON.parse(localStorage.getItem('idc_local_admins')) || {};
-            admins[MY_SECRET_NAME] = MY_SECRET_PASS;
-
-            if(!inputUser || !inputPass) {
-                return alert("Username aur Password enter karna lazmi hai!");
-            }
-
-            if(isAuthenticationLoginState) {
-                if(inputUser.toLowerCase() === MY_SECRET_NAME.toLowerCase() && inputPass === MY_SECRET_PASS) {
-                    alert("👑 Welcome Super Admin Moazzam! Access Control Panel Activated.");
-                    lblAuthState.innerText = "Master Control Dashboard";
-                    lblAuthDesc.innerText = "Yahan se aap kisi bhi account ka password dekh, badal ya account remove kar sakte hain.";
-                    btnShiftState.style.display = "none";
-                    txtAuthUser.style.display = "none";
-                    txtAuthPassword.style.display = "none";
-                    btnSubmitAuth.style.display = "none";
-                    
-                    // Hide eye wrap container inside dashboard grid view
-                    const eyeWrap = document.getElementById('eyeToggleWrap');
-                    if(eyeWrap) eyeWrap.style.display = "none";
-
-                    superAdminPanel.style.display = "block";
-                    renderUserManagementTable();
-                } else if(admins[inputUser] && admins[inputUser] === inputPass) {
-                    alert("Authentication successful! Welcome to IDC Ledger.");
-                    sessionStorage.setItem('idc_active_local_admin', inputUser);
-                    window.location.href = "index.html"; 
-                } else {
-                    alert("Ghalat Username ya Password! Please dobara check karein.");
-                    txtAuthPassword.value = ""; // Auto-wipe single field on wrong key entry
-                }
-            } else {
-                if(inputUser.toLowerCase() === MY_SECRET_NAME.toLowerCase()) {
-                    return alert("Yeh name owner control ke liye reserved hai!");
-                }
-                if(admins[inputUser]) {
-                    return alert("Yeh admin username pehle se register hai!");
-                }
-
-                admins[inputUser] = inputPass; 
-                localStorage.setItem('idc_local_admins', JSON.stringify(admins));
-                alert("Naya Admin Account kamyabi se ban gaya hai!");
-                txtAuthUser.value = '';
-                txtAuthPassword.value = '';
-                setLoginInterface();
-            }
-        });
+        setLoginInterface();
 
         btnShiftState.addEventListener('click', () => {
             isAuthenticationLoginState = !isAuthenticationLoginState;
@@ -392,8 +251,146 @@
                 lblAuthDesc.innerText = "Apna alag private account banane ke liye details enter karein.";
                 btnSubmitAuth.innerText = "Create Account";
                 btnShiftState.innerText = "Pehle se account majood hai? Login Karein";
-                txtAuthUser.value = "";
-                txtAuthPassword.value = "";
+            }
+        });
+
+        // 📋 CLOUD REALTIME SYNC RENDERING ENGINE
+        async function renderUserManagementTable() {
+            userTableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#94a3b8; font-style:italic;">Loading live accounts...</td></tr>`;
+            try {
+                const snapshot = await get(ref(db, 'idc_users'));
+                userTableBody.innerHTML = "";
+                let admins = snapshot.exists() ? snapshot.val() : {};
+                let staffUsers = Object.keys(admins).filter(user => user.toLowerCase() !== MY_SECRET_NAME.toLowerCase());
+
+                if(staffUsers.length === 0) {
+                    userTableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#94a3b8; font-style:italic;">Koi staff account register nahi hai.</td></tr>`;
+                    return;
+                }
+
+                staffUsers.forEach(user => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="font-weight:600; color:#334155;">${user}</td>
+                        <td style="color:#0d9488; font-family:monospace; font-weight:bold;">${admins[user]}</td>
+                        <td style="text-align: center;">
+                            <div style="display:flex; gap:5px; justify-content:center;">
+                                <button class="btn-panel-edit" data-username="${user}" style="background-color:#d97706; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px; font-weight:bold;">Edit Pass</button>
+                                <button class="btn-panel-delete" data-username="${user}" style="background-color:#dc2626; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px; font-weight:bold;">Delete</button>
+                            </div>
+                        </td>
+                    `;
+                    userTableBody.appendChild(tr);
+                });
+
+                // EDIT STAFF ACCOUNT CLOUD CONTROL
+                document.querySelectorAll('.btn-panel-edit').forEach(btn => {
+                    btn.onclick = async function(e) {
+                        const targetUser = e.target.dataset.username;
+                        const oldPassword = admins[targetUser];
+                        const newPassword = prompt(`🔑 Change Password for '${targetUser}':\nPurana Password: ${oldPassword}\n\nNaya Password input karein:`, oldPassword);
+                        
+                        if (newPassword === null) return; 
+                        if (newPassword.trim() === "") return alert("Password khali nahi ho sakta!");
+
+                        await set(ref(db, 'idc_users/' + targetUser), newPassword.trim());
+                        alert(`✅ Done! Account '${targetUser}' ka password online database par successfully update ho gaya.`);
+                        renderUserManagementTable(); 
+                    };
+                });
+                // DELETE STAFF ACCOUNT CLOUD CONTROL
+                document.querySelectorAll('.btn-panel-delete').forEach(btn => {
+                    btn.onclick = async function(e) {
+                        const targetToDelete = e.target.dataset.username;
+                        if(confirm(`⚠️ WARNING:\nKya aap account '${targetToDelete}' aur us ka poora cloud expense data permanently delete karna chahte hain?`)) {
+                            // Delete from cloud users structure matrix
+                            await remove(ref(db, 'idc_users/' + targetToDelete));
+                            
+                            // Wipe cloud ledger storage blocks for this user node
+                            await remove(ref(db, 'idc_expenses/' + targetToDelete));
+
+                            alert(`🗑️ Account '${targetToDelete}' and all records removed from cloud database.`);
+                            renderUserManagementTable();
+                        }
+                    };
+                });
+            } catch (err) {
+                alert("Cloud read initialization error: " + err.message);
+            }
+        }
+
+        // 👑 SUPERADMIN OPERATIONAL POWERS
+        btnSuperLogout.onclick = function() {
+            sessionStorage.removeItem('idc_active_local_admin');
+            setLoginInterface(); 
+            alert("Super Admin Identity session wiped out successfully.");
+        };
+
+        btnChangeSuperPass.onclick = async function() {
+            const promptNewPass = prompt(`🔑 Super Admin Password Engine:\n\nActive Owner Username: ${MY_SECRET_NAME}\nActive Owner Password: ${MY_SECRET_PASS}\n\nNaya Secret Password type karein:`, MY_SECRET_PASS);
+            if (promptNewPass === null) return;
+            if (promptNewPass.trim() === "") return alert("Password khali nahi rakha ja sakta!");
+
+            MY_SECRET_PASS = promptNewPass.trim();
+            await set(ref(db, 'idc_users/' + MY_SECRET_NAME), MY_SECRET_PASS);
+            alert(`✅ Success!\nSuperadmin password successfully updated to cloud node: ${MY_SECRET_PASS}`);
+        };
+
+        // GATEWAY SUBMISSION GATE CHECK
+        btnSubmitAuth.addEventListener('click', async () => {
+            const inputUser = txtAuthUser.value.trim(); 
+            const inputPass = txtAuthPassword.value;
+
+            if(!inputUser || !inputPass) {
+                return alert("Username aur Password enter karna lazmi hai!");
+            }
+
+            try {
+                // Fetch dynamic master records layer directly from Firebase Realtime Cloud
+                const snapshot = await get(ref(db, 'idc_users'));
+                let admins = snapshot.exists() ? snapshot.val() : {};
+                
+                // Fallback auto injection seed framework
+                if (!admins[MY_SECRET_NAME]) {
+                    admins[MY_SECRET_NAME] = MY_SECRET_PASS;
+                    await set(ref(db, 'idc_users/' + MY_SECRET_NAME), MY_SECRET_PASS);
+                }
+
+                if(isAuthenticationLoginState) {
+                    if(inputUser.toLowerCase() === MY_SECRET_NAME.toLowerCase() && inputPass === admins[MY_SECRET_NAME]) {
+                        alert("👑 Welcome Super Admin Moazzam! Access Control Panel Activated.");
+                        lblAuthState.innerText = "Master Control Dashboard";
+                        lblAuthDesc.innerText = "Yahan se aap kisi bhi account ka password dekh, badal ya account remove kar sakte hain.";
+                        btnShiftState.style.display = "none";
+                        txtAuthUser.style.display = "none";
+                        txtAuthPassword.style.display = "none";
+                        btnSubmitAuth.style.display = "none";
+                        superAdminPanel.style.display = "block";
+                        renderUserManagementTable();
+                    } else if(admins[inputUser] && admins[inputUser] === inputPass) {
+                        alert("Authentication successful! Welcome to IDC Ledger.");
+                        sessionStorage.setItem('idc_active_local_admin', inputUser);
+                        window.location.href = "index.html"; 
+                    } else {
+                        alert("Ghalat Username ya Password! Please dobara check karein.");
+                    }
+                } else {
+                    if(inputUser.toLowerCase() === MY_SECRET_NAME.toLowerCase()) {
+                        return alert("Yeh name owner control ke liye reserved hai!");
+                    }
+                    if(admins[inputUser]) {
+                        return alert("Yeh admin username pehle se register hai!");
+                    }
+
+                    // Save new user account parameters directly into dynamic database
+                    await set(ref(db, 'idc_users/' + inputUser), inputPass);
+                    alert("Naya Admin Account cloud par kamyabi se ban gaya hai!");
+                    txtAuthUser.value = '';
+                    txtAuthPassword.value = '';
+                    setLoginInterface();
+                }
+            } catch (err) {
+                alert("Database operations failed: " + err.message);
             }
         });
 
@@ -405,31 +402,6 @@
         }
         txtAuthUser.addEventListener("keydown", handleKeyboardEnter);
         txtAuthPassword.addEventListener("keydown", handleKeyboardEnter);
-
-        // 👁️ DYNAMIC RUNTIME MARKUP EYE ICON GENERATOR CONTROL
-        document.addEventListener("DOMContentLoaded", () => {
-            const eyeContainer = document.createElement("div");
-            eyeContainer.id = "eyeToggleWrap";
-            eyeContainer.style.cssText = "display: flex; justify-content: flex-end; align-items: center; width: 100%; margin: -5px 0 15px 0; padding: 0 5px;";
-            
-            const eyeBtn = document.createElement("span");
-            eyeBtn.id = "eyeIconEmblem";
-            eyeBtn.innerText = "👁️ Show Password";
-            eyeBtn.style.cssText = "font-size: 12px; color: #002060; font-weight: bold; cursor: pointer; text-decoration: underline; background: transparent; border: none; outline: none; user-select: none;";
-            
-            eyeBtn.onclick = window.togglePasswordVisibilityDisplay;
-            eyeContainer.appendChild(eyeBtn);
-            
-            // Inject inline exact block arrangement position right beneath password element field box
-            txtAuthPassword.parentNode.insertBefore(eyeContainer, txtAuthPassword.nextSibling);
-            
-            // Read runtime adjustments storage variables parameters tracking modifications
-            if(localStorage.getItem('idc_super_pass')) {
-                MY_SECRET_PASS = localStorage.getItem('idc_super_pass');
-            }
-            setLoginInterface();
-        });
     </script>
 </body>
 </html>
-
