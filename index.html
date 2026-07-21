@@ -179,7 +179,7 @@
         <section class="signature-section"><div class="sig-box">Prepared By</div><div class="sig-box">Checked By</div><div class="sig-box">Approved By</div></section>
         <footer class="portal-footer">Designed by <span style="font-weight:bold;color:#002060;">M. Moazzam</span> | © 2026 All Rights Reserved</footer>
     </div>
-        <!-- REAL-TIME INTERACTIVE CLOUD LEDGER CORE SYSTEM JS INITIALIZER -->
+       <!-- REAL-TIME INTERACTIVE CLOUD LEDGER CORE SYSTEM JS INITIALIZER -->
     <script>
         (function() {
             var s1 = document.createElement('script');
@@ -204,48 +204,49 @@
             }
             var db = firebase.database();
 
-            let MY_SECRET_NAME = "Moazzam";        
-            let MY_SECRET_PASS = "Moazzam1451";     
-            let isAuthenticationLoginState = true;
+            var MY_SECRET_NAME = "Moazzam";        
+            var MY_SECRET_PASS = "Moazzam1451";     
+            var isAuthenticationLoginState = true;
 
-            const authWorkspaceBlock = document.getElementById('authWorkspaceBlock');
-            const appWorkspace = document.getElementById('appWorkspace');
-            const lblAuthState = document.getElementById('lblAuthState');
-            const lblAuthDesc = document.getElementById('lblAuthDesc');
-            const txtAuthUser = document.getElementById('txtAuthUser');
-            const txtAuthPhone = document.getElementById('txtAuthPhone');
-            const txtAuthPassword = document.getElementById('txtAuthPassword');
-            const btnSubmitAuth = document.getElementById('btnSubmitAuth');
-            const btnShiftState = document.getElementById('btnShiftState');
-            const superAdminPanel = document.getElementById('superAdminPanel');
-            const userTableBody = document.getElementById('userTableBody');
-            const btnSuperLogout = document.getElementById('btnSuperLogout');
-            const btnChangeSuperPass = document.getElementById('btnChangeSuperPass');
+            var authWorkspaceBlock = document.getElementById('authWorkspaceBlock');
+            var appWorkspace = document.getElementById('appWorkspace');
+            var lblAuthState = document.getElementById('lblAuthState');
+            var lblAuthDesc = document.getElementById('lblAuthDesc');
+            var txtAuthUser = document.getElementById('txtAuthUser');
+            var txtAuthPhone = document.getElementById('txtAuthPhone');
+            var txtAuthPassword = document.getElementById('txtAuthPassword');
+            var btnSubmitAuth = document.getElementById('btnSubmitAuth');
+            var btnShiftState = document.getElementById('btnShiftState');
+            var superAdminPanel = document.getElementById('superAdminPanel');
+            var userTableBody = document.getElementById('userTableBody');
+            var btnSuperLogout = document.getElementById('btnSuperLogout');
+            var btnChangeSuperPass = document.getElementById('btnChangeSuperPass');
 
-            const dSel = document.getElementById('sheet-day');
-            for(let i=1; i<=31; i++) { dSel.options[dSel.options.length] = new Option(i, i); }
-            const mSel = document.getElementById('sheet-month');
-            const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            months.forEach(m => { mSel.options[mSel.options.length] = new Option(m, m); });
-            const ySel = document.getElementById('sheet-year');
-            for(let i=2024; i<=2030; i++) { ySel.options[ySel.options.length] = new Option(i, i); }
+            var dSel = document.getElementById('sheet-day');
+            for(var i=1; i<=31; i++) { dSel.options[dSel.options.length] = new Option(i, i); }
+            var mSel = document.getElementById('sheet-month');
+            var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            months.forEach(function(m) { mSel.options[mSel.options.length] = new Option(m, m); });
+            var ySel = document.getElementById('sheet-year');
+            for(var i=2024; i<=2030; i++) { ySel.options[ySel.options.length] = new Option(i, i); }
 
-            let currentAdminToken = sessionStorage.getItem('idc_active_local_admin') || "Staff";
-            let expenses = []; var BUDGET = 0; var editTargetDocId = -1;
+            var currentAdminToken = sessionStorage.getItem('idc_active_local_admin') || "Staff";
+            var expenses = []; var BUDGET = 0; var editTargetDocId = -1;
 
-            const lblActiveAdminEmail = document.getElementById('lblActiveAdminEmail');
-            const btnSignOutSession = document.getElementById('btnSignOutSession');
-            const form = document.getElementById('expense-form');
-            const formTitle = document.getElementById('form-title');
-            const btnSubmit = document.getElementById('btn-submit');
-            const tableBody = document.getElementById('table-body');
-            const totalBudgetEl = document.getElementById('total-budget');
-            const totalExpenseEl = document.getElementById('total-expense');
-            const remainingBudgetEl = document.getElementById('remaining-budget');
-            const grandTotalValEl = document.getElementById('grand-total-val');
-            const remainingCardBlock = document.getElementById('remaining-card-block');
-            const searchFilter = document.getElementById('search-filter');
-            const categoryFilter = document.getElementById('category-filter');
+            var lblActiveAdminEmail = document.getElementById('lblActiveAdminEmail');
+            var btnSignOutSession = document.getElementById('btnSignOutSession');
+            var form = document.getElementById('expense-form');
+            var formTitle = document.getElementById('form-title');
+            var btnSubmit = document.getElementById('btn-submit');
+            var tableBody = document.getElementById('table-body');
+            var totalBudgetEl = document.getElementById('total-budget');
+            var totalExpenseEl = document.getElementById('total-expense');
+            var remainingBudgetEl = document.getElementById('remaining-budget');
+            var grandTotalValEl = document.getElementById('grand-total-val');
+            var remainingCardBlock = document.getElementById('remaining-card-block');
+            var searchFilter = document.getElementById('search-filter');
+            var categoryFilter = document.getElementById('category-filter');
+
             if(sessionStorage.getItem('idc_active_local_admin')) {
                 authWorkspaceBlock.style.display = 'none';
                 appWorkspace.style.display = 'block';
@@ -284,82 +285,88 @@
                     txtAuthPhone.style.display = "block";
                 }
             };
-
-            async function renderUserManagementTable() {
-                userTableBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#94a3b8; font-style:italic;">Loading live accounts...</td></tr>`;
-                try {
-                    const snapshot = await db.ref('idc_users').once('value');
+            function renderUserManagementTable() {
+                userTableBody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#94a3b8; font-style:italic;">Loading live accounts...</td></tr>';
+                db.ref('idc_users').once('value').then(function(snapshot) {
                     userTableBody.innerHTML = "";
-                    let admins = snapshot.exists() ? snapshot.val() : {};
-                    let staffUsers = Object.keys(admins).filter(user => user.toLowerCase() !== MY_SECRET_NAME.toLowerCase());
+                    var admins = snapshot.exists() ? snapshot.val() : {};
+                    var staffUsers = Object.keys(admins).filter(function(user) {
+                        return user.toLowerCase() !== MY_SECRET_NAME.toLowerCase();
+                    });
 
                     if(staffUsers.length === 0) {
-                        userTableBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#94a3b8; font-style:italic;">Koi staff account register nahi hai.</td></tr>`;
+                        userTableBody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#94a3b8; font-style:italic;">Koi staff account register nahi hai.</td></tr>';
                         return;
                     }
 
-                    staffUsers.forEach(user => {
-                        let userData = typeof admins[user] === 'object' ? admins[user] : { password: admins[user], phone: "N/A" };
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `<td>${user}</td><td>${userData.phone || "N/A"}</td><td>${userData.password}</td><td style="text-align: center;"><button class="btn-panel-edit" data-username="${user}" style="background-color:#d97706; color:white; border:none; padding:4px 8px; border-radius:4px; margin-right:5px; cursor:pointer;">Edit</button><button class="btn-panel-delete" data-username="${user}" style="background-color:#dc2626; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">Delete</button></td>`;
+                    staffUsers.forEach(function(user) {
+                        var userData = typeof admins[user] === 'object' ? admins[user] : { password: admins[user], phone: "N/A" };
+                        var tr = document.createElement('tr');
+                        tr.innerHTML = '<td>' + user + '</td><td>' + (userData.phone || "N/A") + '</td><td>' + userData.password + '</td><td style="text-align: center;"><button class="btn-panel-edit" data-username="' + user + '" style="background-color:#d97706; color:white; border:none; padding:4px 8px; border-radius:4px; margin-right:5px; cursor:pointer;">Edit</button><button class="btn-panel-delete" data-username="' + user + '" style="background-color:#dc2626; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">Delete</button></td>';
                         userTableBody.appendChild(tr);
                     });
 
-                    document.querySelectorAll('.btn-panel-edit').forEach(btn => {
-                        btn.onclick = async function(e) {
-                            const targetUser = e.target.dataset.username;
-                            let currentData = typeof admins[targetUser] === 'object' ? admins[targetUser] : { password: admins[targetUser], phone: "N/A" };
-                            const newPassword = prompt(`Naya Password:`, currentData.password);
+                    document.querySelectorAll('.btn-panel-edit').forEach(function(btn) {
+                        btn.onclick = function(e) {
+                            var targetUser = e.target.dataset.username;
+                            var currentData = typeof admins[targetUser] === 'object' ? admins[targetUser] : { password: admins[targetUser], phone: "N/A" };
+                            var newPassword = prompt("Naya Password:", currentData.password);
                             if (!newPassword) return;
-                            let updatePayload = { password: newPassword.trim(), phone: currentData.phone || "N/A" };
-                            await db.ref('idc_users/' + targetUser).set(updatePayload);
-                            renderUserManagementTable(); 
+                            
+                            var updatePayload = { password: newPassword.trim(), phone: currentData.phone || "N/A" };
+                            db.ref('idc_users/' + targetUser).set(updatePayload).then(function() {
+                                renderUserManagementTable();
+                            });
                         };
                     });
 
-                    document.querySelectorAll('.btn-panel-delete').forEach(btn => {
-                        btn.onclick = async function(e) {
-                            const targetToDelete = e.target.dataset.username;
-                            if(confirm(`Delete account '${targetToDelete}'?`)) {
-                                await db.ref('idc_users/' + targetToDelete).remove();
-                                await db.ref('idc_expenses/' + targetToDelete).remove();
-                                renderUserManagementTable();
+                    document.querySelectorAll('.btn-panel-delete').forEach(function(btn) {
+                        btn.onclick = function(e) {
+                            var targetToDelete = e.target.dataset.username;
+                            if(confirm("Delete account '" + targetToDelete + "'?")) {
+                                db.ref('idc_users/' + targetToDelete).remove().then(function() {
+                                    return db.ref('idc_expenses/' + targetToDelete).remove();
+                                }).then(function() {
+                                    renderUserManagementTable();
+                                });
                             }
                         };
                     });
-                } catch (err) { alert(err.message); }
+                }).catch(function(err) { alert(err.message); });
             }
 
             btnSuperLogout.onclick = function() { setLoginInterface(); };
 
-            btnChangeSuperPass.onclick = async function() {
-                const promptNewPass = prompt(`Naya Super Admin Password:`, MY_SECRET_PASS);
+            btnChangeSuperPass.onclick = function() {
+                var promptNewPass = prompt("Naya Super Admin Password:", MY_SECRET_PASS);
                 if (!promptNewPass) return;
                 MY_SECRET_PASS = promptNewPass.trim();
-                await db.ref('idc_users/' + MY_SECRET_NAME).set({ password: MY_SECRET_PASS, phone: "03000000000" });
-                alert("Updated!");
+                db.ref('idc_users/' + MY_SECRET_NAME).set({ password: MY_SECRET_PASS, phone: "03000000000" }).then(function() {
+                    alert("Updated!");
+                });
             };
 
-            btnSubmitAuth.onclick = async function() {
-                const inputUser = txtAuthUser.value.trim(); 
-                const inputPass = txtAuthPassword.value;
-                const inputPhone = txtAuthPhone.value.trim();
+            btnSubmitAuth.onclick = function() {
+                var inputUser = txtAuthUser.value.trim(); 
+                var inputPass = txtAuthPassword.value;
+                var inputPhone = txtAuthPhone.value.trim();
 
                 if(!inputUser || !inputPass) return alert("Username aur Password fill karein!");
                 if(!isAuthenticationLoginState && !inputPhone) return alert("Mobile number enter karna lazmi hai!");
 
-                try {
-                    const snapshot = await db.ref('idc_users').once('value');
-                    let admins = snapshot.exists() ? snapshot.val() : {};
+                db.ref('idc_users').once('value').then(function(snapshot) {
+                    var admins = snapshot.exists() ? snapshot.val() : {};
+                    
                     if (!admins[MY_SECRET_NAME]) { 
-                        await db.ref('idc_users/' + MY_SECRET_NAME).set({ password: MY_SECRET_PASS, phone: "03000000000" }); 
+                        db.ref('idc_users/' + MY_SECRET_NAME).set({ password: MY_SECRET_PASS, phone: "03000000000" }); 
                         admins[MY_SECRET_NAME] = { password: MY_SECRET_PASS, phone: "03000000000" }; 
                     }
 
                     if(isAuthenticationLoginState) {
-                        let targetAdmin = admins[inputUser];
+                        var targetAdmin = admins[inputUser];
                         if (!targetAdmin) return alert("Ghalat Username ya Password!");
-                        let targetPass = typeof targetAdmin === 'object' ? targetAdmin.password : targetAdmin;
+                        
+                        var targetPass = typeof targetAdmin === 'object' ? targetAdmin.password : targetAdmin;
 
                         if(inputUser.toLowerCase() === MY_SECRET_NAME.toLowerCase() && inputPass === targetPass) {
                             superAdminPanel.style.display = "block";
@@ -375,13 +382,15 @@
                         } else { alert("Ghalat Username ya Password!"); }
                     } else {
                         if(admins[inputUser] || inputUser.toLowerCase() === MY_SECRET_NAME.toLowerCase()) return alert("Username unavailable!");
-                        let newUserPayload = { password: inputPass, phone: inputPhone };
-                        await db.ref('idc_users/' + inputUser).set(newUserPayload);
-                        alert("Account Create Hogya with Mobile Number!"); 
-                        txtAuthPhone.value = '';
-                        setLoginInterface();
+                        
+                        var newUserPayload = { password: inputPass, phone: inputPhone };
+                        db.ref('idc_users/' + inputUser).set(newUserPayload).then(function() {
+                            alert("Account Create Hogya with Mobile Number!"); 
+                            txtAuthPhone.value = '';
+                            setLoginInterface();
+                        });
                     }
-                } catch (err) { alert(err.message); }
+                }).catch(function(err) { alert(err.message); });
             };
 
             btnSignOutSession.onclick = function() { 
@@ -510,10 +519,10 @@
                     var targets = expenses.filter(function(item) {
                         return item.selectedDay === dSel.value && item.selectedMonth === mSel.value && item.selectedYear === ySel.value && item.ownerUid === currentAdminToken;
                     });
-                    var ps = targets.map(function(item) { 
+                    var promises = targets.map(function(item) { 
                         return db.ref('idc_expenses/' + currentAdminToken + '/' + item.docId).remove(); 
                     });
-                    Promise.all(ps).then(function() { fetchCloudData(); });
+                    Promise.all(promises).then(function() { fetchCloudData(); });
                 }
             };
 
