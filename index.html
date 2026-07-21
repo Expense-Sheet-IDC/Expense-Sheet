@@ -591,316 +591,204 @@
 
     <!-- GRAPHICS IMAGE EXPORT INTERFACE MODULE -->
     <script src="https://cloudflare.com"></script>
-
-    <!-- REAL-TIME ONLINE INTERACTIVE BACKEND SYSTEM SCRIPTS -->
+ <!-- REAL-TIME ONLINE CLOUD DATABASE CORE SCRIPTS ENGINE -->
     <script type="module">
+        // 👑 PERMANENT CORS FIX: USING SECURE DIRECT FIREBASE BUNDLE CONTEXT
         import { initializeApp } from "https://gstatic.com";
-        import { getDatabase, ref, set, get, child, remove } from "https://gstatic.com";
-
-        // Firebase Sync Infrastructure Configuration Credentials
+        
+        // Initializing native compat interface pointers
         const firebaseConfig = {
             databaseURL: "https://firebaseio.com"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-
-        let currentAdminToken = sessionStorage.getItem('idc_active_local_admin') || "Staff";
-        let expenses = []; 
-        let BUDGET = 0;
-        let editTargetDocId = -1; 
-
-        // DOM Nodes Framework References
-        const appWorkspace = document.getElementById('appWorkspace');
-        const lblActiveAdminEmail = document.getElementById('lblActiveAdminEmail');
-        const btnSignOutSession = document.getElementById('btnSignOutSession');
-        const form = document.getElementById('expense-form');
-        const formTitle = document.getElementById('form-title');
-        const btnSubmit = document.getElementById('btn-submit');
-        const tableBody = document.getElementById('table-body');
-        const totalBudgetEl = document.getElementById('total-budget');
-        const totalExpenseEl = document.getElementById('total-expense');
-        const remainingBudgetEl = document.getElementById('remaining-budget');
-        const grandTotalValEl = document.getElementById('grand-total-val');
-        const remainingCardBlock = document.getElementById('remaining-card-block');
-        const sheetDay = document.getElementById('sheet-day');
-        const sheetMonth = document.getElementById('sheet-month');
-        const sheetYear = document.getElementById('sheet-year');
-        const searchFilter = document.getElementById('search-filter');
-        const categoryFilter = document.getElementById('category-filter');
-
-        // Security Authentication Router Gate Control
-        if(!sessionStorage.getItem('idc_active_local_admin')) {
-            window.location.href = "login.html";
-        } else {
-            lblActiveAdminEmail.innerText = currentAdminToken.toUpperCase();
-            appWorkspace.style.display = 'block';
-            initPeriodDefaultsSetting();
-            fetchCloudData();
+        // Initialize Firebase Global Layer
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
         }
+        const db = firebase.database();
 
-        btnSignOutSession.addEventListener('click', () => {
-            sessionStorage.removeItem('idc_active_local_admin');
-            window.location.href = "login.html";
-        });
+        // System Administration Context Core Secrets Settings
+        let MY_SECRET_NAME = "Moazzam";        
+        let MY_SECRET_PASS = "Moazzam1451";     
 
-        function initPeriodDefaultsSetting() {
-            const currentMonthIndex = new Date().getMonth();
-            const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            sheetDay.value = new Date().getDate().toString();
-            sheetMonth.value = months[currentMonthIndex];
-            sheetYear.value = new Date().getFullYear().toString();
-            document.getElementById('exp-date').value = new Date().toISOString().split('T')[0];
+        let isAuthenticationLoginState = true;
+
+        const lblAuthState = document.getElementById('lblAuthState');
+        const lblAuthDesc = document.getElementById('lblAuthDesc');
+        const txtAuthUser = document.getElementById('txtAuthUser');
+        const txtAuthPassword = document.getElementById('txtAuthPassword');
+        const btnSubmitAuth = document.getElementById('btnSubmitAuth');
+        const btnShiftState = document.getElementById('btnShiftState');
+        const superAdminPanel = document.getElementById('superAdminPanel');
+        const userTableBody = document.getElementById('userTableBody');
+        const btnSuperLogout = document.getElementById('btnSuperLogout');
+        const btnChangeSuperPass = document.getElementById('btnChangeSuperPass');
+
+        function setLoginInterface() {
+            isAuthenticationLoginState = true;
+            lblAuthState.innerText = "Admin Live Login";
+            lblAuthDesc.innerText = "Apna unique admin credentials enter kar ke securely online connect hon.";
+            btnSubmitAuth.innerText = "Secure Login";
+            btnShiftState.innerText = "Naya Admin Account Create Karein (Register)";
+            btnShiftState.style.display = "block";
+            superAdminPanel.style.display = "none";
+            txtAuthUser.style.display = "block";
+            txtAuthPassword.style.display = "block";
+            btnSubmitAuth.style.display = "block";
         }
+        setLoginInterface();
 
-        // Live Download Fetch Sequence Architecture
-        async function fetchCloudData() {
-            try {
-                // Fetch user specific dynamic metrics budget configuration bounds
-                const budgetSnapshot = await get(ref(db, 'idc_budgets/' + currentAdminToken));
-                BUDGET = budgetSnapshot.exists() ? parseFloat(budgetSnapshot.val()) : 0;
-                totalBudgetEl.innerText = `PKR ${BUDGET.toLocaleString()}`;
-
-                // Fetch global real-time synchronized ledger records database
-                const expenseSnapshot = await get(ref(db, 'idc_expenses'));
-                if (expenseSnapshot.exists()) {
-                    const rawData = expenseSnapshot.val();
-                    expenses = [];
-                    // Flat structural data map parsing process
-                    Object.keys(rawData).forEach(userId => {
-                        Object.keys(rawData[userId]).forEach(recordId => {
-                            expenses.push(rawData[userId][recordId]);
-                        });
-                    });
-                } else {
-                    expenses = [];
-                }
-                applyFilters();
-            } catch (err) {
-                console.error("Cloud synchronization stream failed: ", err);
-            }
-        }
-
-        window.changeBudget = async function() {
-            let newBudget = prompt("Enter new Total Budget (PKR):", BUDGET);
-            if (newBudget !== null && !isNaN(newBudget) && newBudget.trim() !== "") {
-                BUDGET = parseFloat(newBudget);
-                await set(ref(db, 'idc_budgets/' + currentAdminToken), BUDGET);
-                totalBudgetEl.innerText = `PKR ${BUDGET.toLocaleString()}`;
-                applyFilters();
-            }
-        };
-        document.getElementById('btnEditBudgetTrigger').onclick = window.changeBudget;
-        btnSubmit.addEventListener('click', async () => {
-            const date = document.getElementById('exp-date').value;
-            const category = document.getElementById('exp-category').value;
-            const desc = document.getElementById('exp-desc').value;
-            const amount = parseFloat(document.getElementById('exp-amount').value);
-
-            if(!date || !category || !desc.trim() || isNaN(amount)) {
-                return alert("Tamam fields complete filled hona lazmi hain.");
-            }
-
-            let targetId = editTargetDocId === -1 ? Date.now().toString() : editTargetDocId;
-            let recordData = {
-                docId: targetId,
-                date, category, desc: desc.trim(), amount, ownerUid: currentAdminToken,
-                selectedDay: sheetDay.value, selectedMonth: sheetMonth.value, selectedYear: sheetYear.value
-            };
-
-            try {
-                // Online database node par write logic pipeline
-                await set(ref(db, `idc_expenses/${currentAdminToken}/${targetId}`), recordData);
-                
-                if (editTargetDocId !== -1) {
-                    editTargetDocId = -1;
-                    formTitle.innerText = "Add New Expense Row";
-                    btnSubmit.innerText = "Add Entry";
-                    btnSubmit.style.backgroundColor = "#002060";
-                }
-
-                form.reset();
-                // Ensure browser split architecture context binding works correctly
-                document.getElementById('exp-date').value = new Date().toISOString().split('T')[0];
-                await fetchCloudData();
-            } catch (err) {
-                alert("Data save karne mein masala aya: " + err.message);
-            }
-        });
-
-        window.applyFilters = function() {
-            const activeDay = sheetDay.value;
-            const activeMonth = sheetMonth.value;
-            const activeYear = sheetYear.value;
-            const searchValue = searchFilter.value.toLowerCase().trim();
-            const categoryValue = categoryFilter.value;
-
-            tableBody.innerHTML = '';
-            let filteredTotal = 0;
-            let totalRunningSum = 0;
-            let displayIndex = 1;
-
-            // 1. Calculate active totals counters
-            expenses.forEach(item => {
-                if(item.selectedDay === activeDay && item.selectedMonth === activeMonth && item.selectedYear === activeYear && item.ownerUid === currentAdminToken) {
-                    totalRunningSum += item.amount;
-                }
-            });
-
-            // 2. Filter display rows matrix setup array bounds
-            const filteredSet = expenses
-                .filter(item => item.selectedDay === activeDay && item.selectedMonth === activeMonth && item.selectedYear === activeYear && item.ownerUid === currentAdminToken)
-                .filter(item => categoryValue === 'ALL' || item.category === categoryValue)
-                .filter(item => item.desc.toLowerCase().includes(searchValue) || item.category.toLowerCase().includes(searchValue))
-                .sort((a, b) => new Date(a.date) - new Date(b.date));
-
-            filteredSet.forEach((item) => {
-                filteredTotal += item.amount;
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td class="text-center" style="font-weight: 600;">${displayIndex}</td>
-                    <td class="text-center">${item.date}</td>
-                    <td>${item.category}</td>
-                    <td>${item.desc}</td>
-                    <td class="text-right">${item.amount.toLocaleString()}</td>
-                    <td class="text-center">
-                        <div class="action-container">
-                            <button class="btn-action-edit" data-id="${item.docId}">Edit</button>
-                            <button class="btn-delete" data-id="${item.docId}">Delete</button>
-                        </div>
-                    </td>
-                `;
-                tableBody.appendChild(row);
-                displayIndex++;
-            });
-
-            // Refresh metric counters views layers
-            let remaining = BUDGET - totalRunningSum;
-            totalExpenseEl.innerText = `PKR ${totalRunningSum.toLocaleString()}`;
-            remainingBudgetEl.innerText = `PKR ${remaining.toLocaleString()}`;
-            grandTotalValEl.innerText = filteredTotal.toLocaleString();
-            
-            if (remaining < 0) {
-                remainingCardBlock.classList.add('budget-danger');
+        btnShiftState.addEventListener('click', () => {
+            isAuthenticationLoginState = !isAuthenticationLoginState;
+            superAdminPanel.style.display = "none";
+            if(isAuthenticationLoginState) {
+                setLoginInterface();
             } else {
-                remainingCardBlock.classList.remove('budget-danger');
+                lblAuthState.innerText = "Register New Live Admin";
+                lblAuthDesc.innerText = "Apna alag private account banane ke liye details enter karein.";
+                btnSubmitAuth.innerText = "Create Account";
+                btnShiftState.innerText = "Pehle se account majood hai? Login Karein";
             }
-            attachDynamicRowListeners();
-        };
+        });
 
-        function attachDynamicRowListeners() {
-            document.querySelectorAll('.btn-delete').forEach(btn => {
-                btn.onclick = async (e) => {
-                    const docId = e.target.dataset.id;
-                    if (confirm("Are you sure you want to delete this expense row from cloud storage?")) {
-                        try {
-                            await remove(ref(db, `idc_expenses/${currentAdminToken}/${docId}`));
-                            await fetchCloudData();
-                        } catch (err) {
-                            alert("Delete fail hoa: " + err.message);
+        async function renderUserManagementTable() {
+            userTableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#94a3b8; font-style:italic;">Loading live accounts...</td></tr>`;
+            try {
+                const snapshot = await db.ref('idc_users').once('value');
+                userTableBody.innerHTML = "";
+                let admins = snapshot.exists() ? snapshot.val() : {};
+                let staffUsers = Object.keys(admins).filter(user => user.toLowerCase() !== MY_SECRET_NAME.toLowerCase());
+
+                if(staffUsers.length === 0) {
+                    userTableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#94a3b8; font-style:italic;">Koi staff account register nahi hai.</td></tr>`;
+                    return;
+                }
+
+                staffUsers.forEach(user => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="font-weight:600; color:#334155;">${user}</td>
+                        <td style="color:#0d9488; font-family:monospace; font-weight:bold;">${admins[user]}</td>
+                        <td style="text-align: center;">
+                            <div style="display:flex; gap:5px; justify-content:center;">
+                                <button class="btn-panel-edit" data-username="${user}" style="background-color:#d97706; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px; font-weight:bold;">Edit Pass</button>
+                                <button class="btn-panel-delete" data-username="${user}" style="background-color:#dc2626; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px; font-weight:bold;">Delete</button>
+                            </div>
+                        </td>
+                    `;
+                    userTableBody.appendChild(tr);
+                });
+
+                document.querySelectorAll('.btn-panel-edit').forEach(btn => {
+                    btn.onclick = async function(e) {
+                        const targetUser = e.target.dataset.username;
+                        const oldPassword = admins[targetUser];
+                        const newPassword = prompt(`🔑 Change Password for '${targetUser}':\nPurana Password: ${oldPassword}\n\nNaya Password input karein:`, oldPassword);
+                        
+                        if (newPassword === null) return; 
+                        if (newPassword.trim() === "") return alert("Password khali nahi ho sakta!");
+
+                        await db.ref('idc_users/' + targetUser).set(newPassword.trim());
+                        alert(`✅ Done! Account '${targetUser}' ka password successfully update ho gaya.`);
+                        renderUserManagementTable(); 
+                    };
+                });
+
+                document.querySelectorAll('.btn-panel-delete').forEach(btn => {
+                    btn.onclick = async function(e) {
+                        const targetToDelete = e.target.dataset.username;
+                        if(confirm(`⚠️ WARNING:\nKya aap account '${targetToDelete}' aur us ka poora cloud expense data permanently delete karna chahte hain?`)) {
+                            await db.ref('idc_users/' + targetToDelete).remove();
+                            await db.ref('idc_expenses/' + targetToDelete).remove();
+                            alert(`🗑️ Account '${targetToDelete}' and all records removed from cloud database.`);
+                            renderUserManagementTable();
                         }
-                    }
-                };
-            });
-
-            document.querySelectorAll('.btn-action-edit').forEach(btn => {
-                btn.onclick = (e) => {
-                    const docId = e.target.dataset.id;
-                    const target = expenses.find(r => r.docId === docId);
-                    if (!target) return;
-
-                    editTargetDocId = docId;
-                    document.getElementById('exp-date').value = target.date;
-                    document.getElementById('exp-category').value = target.category;
-                    document.getElementById('exp-desc').value = target.desc;
-                    document.getElementById('exp-amount').value = target.amount;
-
-                    formTitle.innerText = "Edit Selected Expense Row";
-                    btnSubmit.innerText = "Update Row";
-                    btnSubmit.style.backgroundColor = "#d97706";
-                    window.scrollTo({ top: 150, behavior: 'smooth' });
-                };
-            });
+                    };
+                });
+            } catch (err) {
+                alert("Cloud read error: " + err.message);
+            }
         }
 
-        window.clearAllData = async function() {
-            const activeDay = sheetDay.value;
-            const activeMonth = sheetMonth.value;
-            const activeYear = sheetYear.value;
-            if (confirm("⚠️ WARNING: Kya aap waqai is selected date ka data online database se permanently clear karna chahte hain?")) {
-                try {
-                    // Filter targets nodes to remove from cloud structural layer
-                    let targetsToRemove = expenses.filter(item => item.selectedDay === activeDay && item.selectedMonth === activeMonth && item.selectedYear === activeYear && item.ownerUid === currentAdminToken);
-                    
-                    for (let item of targetsToRemove) {
-                        await remove(ref(db, `idc_expenses/${currentAdminToken}/${item.docId}`));
-                    }
-                    await fetchCloudData();
-                } catch (err) {
-                    alert("Clear fail hoa: " + err.message);
-                }
+        btnSuperLogout.onclick = function() {
+            sessionStorage.removeItem('idc_active_local_admin');
+            setLoginInterface(); 
+            alert("Super Admin Identity session wiped out successfully.");
+        };
+
+        btnChangeSuperPass.onclick = async function() {
+            const promptNewPass = prompt(`🔑 Super Admin Password Engine:\n\nActive Owner Username: ${MY_SECRET_NAME}\nActive Owner Password: ${MY_SECRET_PASS}\n\nNaya Secret Password type karein:`, MY_SECRET_PASS);
+            if (promptNewPass === null) return;
+            if (promptNewPass.trim() === "") return alert("Password khali nahi rakha ja sakta!");
+
+            MY_SECRET_PASS = promptNewPass.trim();
+            await db.ref('idc_users/' + MY_SECRET_NAME).set(MY_SECRET_PASS);
+            alert(`✅ Success!\nSuperadmin password successfully updated.`);
+        };
+
+        btnSubmitAuth.addEventListener('click', async () => {
+            const inputUser = txtAuthUser.value.trim(); 
+            const inputPass = txtAuthPassword.value;
+
+            if(!inputUser || !inputPass) {
+                return alert("Username aur Password enter karna lazmi hai!");
             }
-        };
-        document.getElementById('btnFlushData').onclick = window.clearAllData;
 
-        window.exportToExcel = function() {
-            const activeDay = sheetDay.value; 
-            const activeMonth = sheetMonth.value; 
-            const activeYear = sheetYear.value;
-            const contextData = expenses.filter(item => item.selectedDay === activeDay && item.selectedMonth === activeMonth && item.selectedYear === activeYear && item.ownerUid === currentAdminToken);
-            if (contextData.length === 0) return alert("Sheet khali hai!");
+            try {
+                const snapshot = await db.ref('idc_users').once('value');
+                let admins = snapshot.exists() ? snapshot.val() : {};
+                
+                if (!admins[MY_SECRET_NAME]) {
+                    admins[MY_SECRET_NAME] = MY_SECRET_PASS;
+                    await db.ref('idc_users/' + MY_SECRET_NAME).set(MY_SECRET_PASS);
+                }
 
-            let csvContent = "\uFEFFISLAMABAD DIAGNOSTIC CENTER (PVT) LTD.,,,,\nMonthly Expense Sheet - IDC G-8 Branch,,,,\nReport Period: Day " + activeDay + " - " + activeMonth + " " + activeYear + ",,,,\n\nSr. No.,Date,Expense Category,Description,Amount (PKR)\n";
-            let total = 0;
-            contextData.forEach((item, index) => {
-                total += item.amount;
-                csvContent += `${index + 1},${item.date},"${item.category}","${item.desc.replace(/"/g, '""')}",${item.amount}\n`;
-            });
-            csvContent += `,,,Grand Total:,${total}\n`;
-            
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a"); 
-            link.setAttribute("href", URL.createObjectURL(blob));
-            link.setAttribute("download", `IDC_G8_Expenses_${activeDay}_${activeMonth}_${activeYear}.csv`);
-            document.body.appendChild(link); 
-            link.click(); 
-            document.body.removeChild(link);
-        };
-        document.getElementById('btnExportToExcel').onclick = window.exportToExcel;
+                if(isAuthenticationLoginState) {
+                    if(inputUser.toLowerCase() === MY_SECRET_NAME.toLowerCase() && inputPass === admins[MY_SECRET_NAME]) {
+                        alert("👑 Welcome Super Admin Moazzam! Access Control Panel Activated.");
+                        lblAuthState.innerText = "Master Control Dashboard";
+                        lblAuthDesc.innerText = "Yahan se aap kisi bhi account ka password dekh, badal ya account remove kar sakte hain.";
+                        btnShiftState.style.display = "none";
+                        txtAuthUser.style.display = "none";
+                        txtAuthPassword.style.display = "none";
+                        btnSubmitAuth.style.display = "none";
+                        superAdminPanel.style.display = "block";
+                        renderUserManagementTable();
+                    } else if(admins[inputUser] && admins[inputUser] === inputPass) {
+                        alert("Authentication successful! Welcome to IDC Ledger.");
+                        sessionStorage.setItem('idc_active_local_admin', inputUser);
+                        window.location.href = "index.html"; 
+                    } else {
+                        alert("Ghalat Username ya Password! Please dobara check karein.");
+                    }
+                } else {
+                    if(inputUser.toLowerCase() === MY_SECRET_NAME.toLowerCase()) {
+                        return alert("Yeh name owner control ke liye reserved hai!");
+                    }
+                    if(admins[inputUser]) {
+                        return alert("Yeh admin username pehle se register hai!");
+                    }
 
-        // 🖼️ DIRECT VISUAL RENDERING IMAGE DOWNLOAD CAPTURE ENGINE
-        window.exportToJPG = function() {
-            const activeDay = sheetDay.value; 
-            const activeMonth = sheetMonth.value; 
-            const activeYear = sheetYear.value;
-            const workspaceElement = document.getElementById('appWorkspace');
-            
-            if (!workspaceElement) return alert("System view context error!");
+                    await db.ref('idc_users/' + inputUser).set(inputPass);
+                    alert("Naya Admin Account cloud par kamyabi se ban gaya hai!");
+                    txtAuthUser.value = '';
+                    txtAuthPassword.value = '';
+                    setLoginInterface();
+                }
+            } catch (err) {
+                alert("Database operations failed: " + err.message);
+            }
+        });
 
-            html2canvas(workspaceElement, {
-                scale: 2, // Enhances text crispness and quality
-                useCORS: true,
-                backgroundColor: "#ffffff"
-            }).then(canvas => {
-                const imageUri = canvas.toDataURL("image/jpeg", 0.9);
-                const downloadAnchor = document.createElement("a");
-                downloadAnchor.href = imageUri;
-                downloadAnchor.download = `IDC_G8_Report_${activeDay}_${activeMonth}_${activeYear}.jpg`;
-                document.body.appendChild(downloadAnchor);
-                downloadAnchor.click();
-                document.body.removeChild(downloadAnchor);
-            }).catch(err => {
-                alert("Visual image export fail hui: " + err.message);
-            });
-        };
-        document.getElementById('btnExportToJPG').onclick = window.exportToJPG;
-        document.getElementById('btnPrintReport').onclick = () => window.print();
-
-        sheetDay.addEventListener('change', window.applyFilters);
-        sheetMonth.addEventListener('change', window.applyFilters);
-        sheetYear.addEventListener('change', window.applyFilters);
-        searchFilter.addEventListener('input', window.applyFilters);
-        categoryFilter.addEventListener('change', window.applyFilters);
+        function handleKeyboardEnter(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                btnSubmitAuth.click();
+            }
+        }
+        txtAuthUser.addEventListener("keydown", handleKeyboardEnter);
+        txtAuthPassword.addEventListener("keydown", handleKeyboardEnter);
     </script>
 </body>
 </html>
+
